@@ -4,7 +4,7 @@ let panelPort = chrome.runtime.connect({
 const panelContext = {
   currentSelectedTab: '#params-tab',
   currentSelectedComponentId: null,
-  currentSelectedComponent: null,
+  currentSelectedComponent: {},
   _components: {}
 };
 
@@ -74,7 +74,11 @@ function isEmpty(obj) {
 }
 function setSelectedComponentId(componentId) {
   panelContext.currentSelectedComponentId = componentId;
-  panelContext.currentSelectedComponent = getComponentById(panelContext._components, panelContext.currentSelectedComponentId) || {}
+  if (panelContext._components.id === panelContext.currentSelectedComponentId) {
+    panelContext.currentSelectedComponent = panelContext._components || {};
+  }else {
+    panelContext.currentSelectedComponent = getComponentById(panelContext._components, panelContext.currentSelectedComponentId) || {}
+  }
 }
 
 function setSelectedTab(tabId) {
