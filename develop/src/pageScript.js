@@ -1,15 +1,18 @@
-const lifeCycleLog = {};
+const lifeCycleLog = {},
+  eventRegister = {
+    eventLog: []
+  };
 lifeCycleLog.getEventsSorted = getEventsSorted;
 lifeCycleLog.getEventCount = getEventCount;
 lifeCycleLog._components = {};
-
+eventRegister.fetchEventsLog = fetchEventsLog;
 try {
   FusionCharts.addEventListener('*', logEvent);
 } catch (err) {
   // suppressing error for other pages which does not hold FusionChart var
 }
 
-window.addEventListener('GET_CHARTS', function getDuckInPage(event) {
+window.addEventListener('GET_CHARTS', function getChartsInPage(event) {
   //You can also use dispatchEvent
   console.log('inside pageScript window.', event);
   let tree = getComponentTree(FusionCharts.items),
@@ -21,6 +24,10 @@ window.addEventListener('GET_CHARTS', function getDuckInPage(event) {
   window.postMessage({action: 'GOT_CHARTS', payload: {tree, lifeCycleObj}}, '*');
 }, false);
 
+FusionCharts.addEventListener('*', function registerEventLogs(e){
+  registerEvents(e);
+  window.postMessage({action: 'GOT_EVENTS', payload: eventRegister.eventLog}, '*');
+});
 function getComponentTree (items) {
   let tree;
   for (let item in items) {
@@ -80,18 +87,22 @@ function getConfig (config) {
             let tempArr = [];
             for (let index = 0; index < config[item].length; index++) {
               const element = config[item][index];
-              if (element instanceof Array) {
-                tempArr.push(getConfig(element));
-              } else if (element instanceof Function) {
-                tempArr.push(element.toString());
-              }else if (element.constructor.toString().includes('Object')) {
-                tempArr.push(getConfig(element));
-              }else if (!element.constructor){
-                // console.log(element);
-                // console.log(typeof element);
-                // console.log(element.constructor.toString());
+              if (element) {
+                if (element instanceof Array) {
+                  tempArr.push(getConfig(element));
+                } else if (element instanceof Function) {
+                  tempArr.push(element.toString());
+                }else if (element.constructor.toString().includes('Object')) {
+                  tempArr.push(getConfig(element));
+                }else if (!element.constructor){
+                  // console.log(element);
+                  // console.log(typeof element);
+                  // console.log(element.constructor.toString());
+                  tempArr.push(element);
+                }
+              }else {
                 tempArr.push(element);
-              }            
+              }
             }
             finalConfig[item] = tempArr;
           }else if (config[item] instanceof Function) {
@@ -196,4 +207,33 @@ function sortEventStreamASC(eventStream) {
   }).map((v) => {
     return v.type;
   });
-} 
+}
+function registerEvents (e) {
+  if (e.sender) {
+    eventRegister.eventLog.push({
+      eventId: e.type,
+      // reference: e.sender.apiInstance || e.sender,
+      referenceId: e.sender.apiInstance ? e.sender.apiInstance.getId ? e.sender.apiInstance.getId() : e.sender.apiInstance.id :
+        e.sender ? e.sender.getId ? e.sender.getId() : e.sender.id : {}
+    });
+  }
+
+}
+function fetchEventsLog( eventId = 'all', componentId = 'all') {
+  let eventLog = eventRegister.eventLog;
+  if (eventId.toLowerCase() === 'all' && componentId.toLowerCase() === 'all') {
+    return eventLog;
+  }else if (eventId.toLowerCase() === 'all' && componentId.toLowerCase() !== 'all') {
+    return eventLog.filter((event) => {
+      return (event.referenceId === componentId);
+    });
+  }else if (eventId.toLowerCase() !== 'all' && componentId.toLowerCase() === 'all') {
+    return eventLog.filter((event) => {
+      return (event.eventId === eventId);
+    });
+  }else {
+    return eventLog.filter((event) => {
+      return (event.eventId === eventId && event.referenceId === componentId);
+    });
+  }
+}

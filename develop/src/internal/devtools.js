@@ -1,4 +1,4 @@
-chrome.devtools.panels.create("fctools",
+chrome.devtools.panels.create("FCDevtool",
     "MyPanelIcon.png",
     "../viz/pane/panel.html",
     function(panel) {

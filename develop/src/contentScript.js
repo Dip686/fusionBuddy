@@ -42,5 +42,7 @@ window.addEventListener('message', function receiveChart(event) {
     //  window.removeEventListener('message', receiveDuck, false);
      contentPort.postMessage({type: 'GOT_CHARTS', payload: event.data.payload});
      console.log('receving FusionCharts', event.data.payload);
+  }else if (event.data.action === 'GOT_EVENTS'){
+    contentPort.postMessage({type: 'GOT_EVENTS', payload: event.data.payload});
   }
 }, false);

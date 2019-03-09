@@ -2,17 +2,18 @@
 //is disabled
 
 //Wait for some one connect to it
-let contentPort, activeTab, chartInfo, panelPort;
+let contentPort, activeTab, panelPort;
 chrome.runtime.onConnect.addListener(function(portFrom) {
    if(portFrom.name === 'background-content') {
      console.log('background-content', portFrom);
      contentPort = portFrom;
      contentPort.onMessage.addListener(function(message) {
         console.log('receieved', message);
-        chartInfo = message.payload;
         console.log(panelPort);
-        if (message.type ==="GOT_CHARTS") {
-          panelPort.postMessage({type: 'GOT_CHARTS', payload: chartInfo});
+        if (message.type ==='GOT_CHARTS') {
+          panelPort.postMessage({type: 'GOT_CHARTS', payload: message.payload});
+        }else if (message.type === 'GOT_EVENTS') {
+          panelPort.postMessage({type: 'GOT_EVENTS', payload: message.payload});
         }
       });
     }else if (portFrom.name === 'panel-commn') {

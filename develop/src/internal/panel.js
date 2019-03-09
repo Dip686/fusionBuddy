@@ -9,11 +9,15 @@ const panelContext = {
 };
 
 panelPort && panelPort.postMessage({type: 'GET_CHARTS', payload: {}});
+
 panelPort.onMessage.addListener(function (msg) {
-  let components = msg.payload.tree,
-    compInnerHTML,
-    jsTreeObj,
-    componentViewID = document.getElementById('component-view-parent');
+  if (msg.type === 'GOT_EVENTS') {
+    console.log('msg received events', msg);
+  }else if (msg.type === 'GOT_CHARTS') {
+    let components = msg.payload.tree,
+      compInnerHTML,
+      jsTreeObj,
+      componentViewID = document.getElementById('component-view-parent');
     console.log('msg received', msg);
     setPanelComponentsData(components);
     compInnerHTML = buildTree(components);
@@ -45,7 +49,9 @@ panelPort.onMessage.addListener(function (msg) {
     $('.switch-tab-button').on('click', function () {
       setSelectedTab($(this).data('tab-id'));
     });
+  }
 });
+
 document.getElementById('refresh-btn').addEventListener('click', function refreshData() {
   panelPort && panelPort.postMessage({type: 'GET_UPDATED_DATA', payload: {componentId: panelContext.currentSelectedComponentId}});
 });
