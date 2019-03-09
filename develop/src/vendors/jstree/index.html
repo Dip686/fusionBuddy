@@ -1,0 +1,51 @@
+<html>
+
+<head>
+    <link rel="stylesheet" href="assets/themes/default/style.min.css" />
+</head>
+
+<body>
+    <div id="jstree_demo_div">
+        <ul>
+            <li>Root node
+                <ul>
+                    <li>Child node 1</li>
+                    <li>Child node 2</li>
+                    <li>
+                        inner parent
+                        <ul>
+                            <li>Child node 1</li>
+                            <li>Child node 2</li>
+                            <li>
+                                inner parent
+                                <ul>
+                                    <li>Child node 1</li>
+                                    <li>Child node 2</li>
+                                    <li>
+                                        inner parent
+                                        <ul>
+                                            <li>Child node 1</li>
+                                            <li>Child node 2</li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js"></script>
+    <script src="assets/jstree.min.js"></script>
+
+    <script>
+        $(function () {
+            $('#jstree_demo_div').jstree({
+            });
+        });
+    </script>
+</body>
+
+</html>
