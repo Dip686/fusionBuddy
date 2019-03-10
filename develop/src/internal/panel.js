@@ -41,7 +41,7 @@ panelPort.onMessage.addListener(function (msg) {
 			var selectedComponentId = $('#' + data.selected[0]).data('component-id');
 			setSelectedComponentId(selectedComponentId);
 			setSelectedTab('#params-tab');
-			fetchFreshDataForComponent(panelContext.currentSelectedComponentId);
+			// fetchFreshDataForComponent(panelContext.currentSelectedComponentId);
 			
 		});
 		$('.switch-tab-button').off();
@@ -111,7 +111,7 @@ function selectTabInternal() {
 			dataToShow = panelContext.currentSelectedComponent ? pluckEventsInfo(panelContext.currentSelectedComponent) : {};
 			break;
 		case "#life-cycle-tab":
-			dataToShow = panelContext.currentSelectedComponentLifecycle || {};
+			dataToShow = panelContext.currentSelectedComponentLifecycle[panelContext.currentSelectedComponentId] || {};
 			break;
 	}
 

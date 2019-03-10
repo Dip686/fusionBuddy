@@ -16,11 +16,11 @@ window.addEventListener('GET_CHARTS', function getChartsInPage(event) {
   //You can also use dispatchEvent
   console.log('inside pageScript window.', event);
   let tree = getComponentTree(FusionCharts.items),
-    lifeCycleObj = {},
-    componentId = event.detail && event.detail.id;
-  if (componentId) {
-    lifeCycleObj = lifeCycleLog[componentId];
-  }
+    lifeCycleObj = JSON.parse(JSON.stringify(lifeCycleLog));
+  //   componentId = event.detail && event.detail.id;
+  // if (componentId) {
+  //   lifeCycleObj = lifeCycleLog[componentId];
+  // }
   window.postMessage({action: 'GOT_CHARTS', payload: {tree, lifeCycleObj}}, '*');
 }, false);
 
