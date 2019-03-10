@@ -16,11 +16,11 @@ window.addEventListener('GET_CHARTS', function getChartsInPage(event) {
   //You can also use dispatchEvent
   console.log('inside pageScript window.', event);
   let tree = getComponentTree(FusionCharts.items),
-    lifeCycleObj = {},
-    componentId = event.detail && event.detail.id;
-  if (componentId) {
-    lifeCycleObj = lifeCycleLog[componentId];
-  }
+    lifeCycleObj = JSON.parse(JSON.stringify(lifeCycleLog));
+  //   componentId = event.detail && event.detail.id;
+  // if (componentId) {
+  //   lifeCycleObj = lifeCycleLog[componentId];
+  // }
   window.postMessage({action: 'GOT_CHARTS', payload: {tree, lifeCycleObj}}, '*');
 }, false);
 
@@ -170,7 +170,8 @@ function logEvent (e) {
   meta[e.type] = meta[e.type] ? meta[e.type] + 1 : 1;
   meta.eventStream.push({
     type: e.type,
-    timestamp: Date.now()
+    timestamp: Date.now(),
+    now: new Date()
   });
 }
 function getEventsSorted(componentId, eventName) {
