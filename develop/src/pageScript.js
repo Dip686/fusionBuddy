@@ -170,7 +170,8 @@ function logEvent (e) {
   meta[e.type] = meta[e.type] ? meta[e.type] + 1 : 1;
   meta.eventStream.push({
     type: e.type,
-    timestamp: Date.now()
+    timestamp: Date.now(),
+    now: new Date()
   });
 }
 function getEventsSorted(componentId, eventName) {

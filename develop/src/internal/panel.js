@@ -111,7 +111,8 @@ function selectTabInternal() {
 			dataToShow = panelContext.currentSelectedComponent ? pluckEventsInfo(panelContext.currentSelectedComponent) : {};
 			break;
 		case "#life-cycle-tab":
-			dataToShow = panelContext.currentSelectedComponentLifecycle[panelContext.currentSelectedComponentId] || {};
+      dataToShow = panelContext.currentSelectedComponentLifecycle[panelContext.currentSelectedComponentId] || {};
+      !isEmpty(dataToShow) && (dataToShow.eventsInOrder = orderEvents(dataToShow));
 			break;
 	}
 
@@ -121,6 +122,13 @@ function selectTabInternal() {
 }
 function init() {
 	setSelectedTab('#params-tab');
+}
+function orderEvents (dataToShow) {
+  if (dataToShow.eventStream) {
+    const reducer = (accumulator, currentValue) => accumulator + ', ' + currentValue.type;
+    return dataToShow.eventStream.reduce(reducer, '').replace(', ','');
+  }
+  return '';
 }
 function setPanelComponentsData(components) {
 	panelContext._components = components;
