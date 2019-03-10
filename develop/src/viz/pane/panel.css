@@ -1,0 +1,106 @@
+html,
+body {
+  min-height: 100%;
+  margin: 0;
+}
+
+.tab-content {
+  font-size: 12px;
+  overflow: scroll;
+  padding: 10px;
+}
+
+.col-25 {
+  width: 25%;
+}
+
+.col-50 {
+  width: 50%;
+}
+
+.col-100 {
+  width: 100%;
+}
+
+.text-center {
+  text-align: center;
+}
+
+#data-section {
+  border-left: 1px solid black;
+}
+
+.header {
+  color: white;
+  background-color: chocolate;
+  height: 8vh;
+  line-height: 6vh;
+  font-size: 20px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.layout-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.layout-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.justify-space-between {
+  justify-content: space-between;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-strech {
+  justify-content: stretch;
+}
+
+.justify-space-around {
+  justify-content: space-around;
+}
+
+.justify-start {
+  justify-content: flex-start;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.full-height {
+  min-height: 100vh;
+  height: 100%;
+}
+
+.switch-tab-button {
+ padding: 0 10px;
+ border-left: 1px solid white;
+ border-right: 1px solid white;
+}
+
+.toolbar {
+	color: white;
+    background-color: chocolate;
+    height: 8vh;
+    cursor: pointer;
+	text-align: center;
+	padding-left: 20px; 
+}
+
+.toolbar .toolbar-title {
+	line-height: 6vh;
+	font-size: 16px;
+}
+
+#refresh-btn {
+	float: right;
+	line-height: 6vh;
+	font-size: 16px;
+}

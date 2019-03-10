@@ -32,19 +32,17 @@ panelPort.onMessage.addListener(function (msg) {
 		componentViewID.appendChild(tempDiv);
 
 		compInnerHTML = `<ul><li data-component-id="${components.id}">chart ${compInnerHTML} </li></ul>`;
+		
 		document.getElementById('jstree_demo_div').innerHTML = compInnerHTML;
 		jsTreeObj = $('#jstree_demo_div').jstree({});
-		jsTreeObj.on("ready.jstree", function () {
-			// $('#jstree_demo_div').jstree("open_all");
-			// $('#jstree_demo_div').jstree(true).select_node(panelContext.currentSelectedComponentId);
-			// $('#jstree_demo_div').jstree("close_all");
-		});
+		
+		//Setting eventListeners to the nodes of js tree
 		$("#jstree_demo_div").on("changed.jstree", function (evt, data) {
 			var selectedComponentId = $('#' + data.selected[0]).data('component-id');
 			setSelectedComponentId(selectedComponentId);
 			setSelectedTab('#params-tab');
-			console.log('selectedComponentId', selectedComponentId, 'panelPort', panelPort);
-			// panelPort && panelPort.postMessage({type: 'GET_UPDATED_DATA', payload: {componentId: selectedComponentId}});
+			fetchFreshDataForComponent(panelContext.currentSelectedComponentId);
+			
 		});
 		$('.switch-tab-button').off();
 		$('.switch-tab-button').on('click', function () {
@@ -54,9 +52,15 @@ panelPort.onMessage.addListener(function (msg) {
 });
 
 document.getElementById('refresh-btn').addEventListener('click', function refreshData() {
-	panelPort && panelPort.postMessage({ type: 'GET_UPDATED_DATA', payload: { componentId: panelContext.currentSelectedComponentId } });
+	fetchFreshDataForComponent(panelContext.currentSelectedComponentId);
 });
+
 init();
+
+function fetchFreshDataForComponent(componentId) {
+	panelPort && panelPort.postMessage({ type: 'GET_UPDATED_DATA', payload: { componentId } });
+}
+
 function buildTree(components) {
 	let str = '<ul>';
 	for (let component in components) {
