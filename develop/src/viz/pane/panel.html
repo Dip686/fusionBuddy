@@ -25,17 +25,14 @@
 
    .col-25 {
      width: 25%;
-     /* text-align: center; */
    }
 
    .col-50 {
      width: 50%;
-     /* text-align: center; */
    }
 
    .col-100 {
      width: 100%;
-     /* text-align: center; */
    }
 
    .text-center {
@@ -85,7 +82,15 @@
      justify-content: center;
    }
 
-   .justify-center {
+   .justify-strech {
+     justify-content: stretch;
+   }
+
+   .justify-space-around {
+     justify-content: space-around;
+   }
+
+   .justify-start {
      justify-content: flex-start;
    }
 
@@ -106,7 +111,12 @@
    .feature-bar {
      height: 8vh;
      border-top: 1px solid white;
+   }
 
+   .switch-tab-button {
+    padding: 0 10px;
+    border-left: 1px solid white;
+    border-right: 1px solid white;
    }
  </style>
 </head>
@@ -115,29 +125,30 @@
  <div class="component-container">
    <div class="layout-row justify-space-between full-height">
      <div id="component-view-parent" class="col-50">
-       <div class="feature-bar">
-         <div class="refresh-container">
-          <button id="refresh-btn">Fetch updated data</button>
-         </div>
-       </div>
-       <div id="jstree_demo_div"></div>
+		<div class="feature-bar">
+			<div class="refresh-container">
+			 <button id="refresh-btn">Fetch updated data</button>
+			</div>
+		  </div>       
+		  <div id="jstree_demo_div"></div>
      </div>
      <div class="layout-column col-50 justify-space-between" id="data-section">
-       <div class="footer col-100 layout-row text-center">
-         <div class="switch-tab-button col-50" data-tab-id="#params-tab" style="border-right: 1px solid white;">Configurations
+       <div class="footer col-100 layout-row text-center justify-space-around">
+         <div class="switch-tab-button" data-tab-id="#params-tab" style="border-right: 1px solid white;">Configurations
          </div>
-         <div class="switch-tab-button col-50" data-tab-id="#events-tab">Event Listeners</div>
+         <div class="switch-tab-button" data-tab-id="#events-tab">Event Listeners</div>
+         <div class="switch-tab-button" data-tab-id="#life-cycle-tab">Lifecycle Log</div>
        </div>
        <div class="layout-row col-100 full-height">
          <div class="panel-tab col-100" id="params-tab">
-           <!-- <div class="header">Params</div> -->
            <div class="tab-content"></div>
          </div>
          <div class="panel-tab col-100" id="events-tab" style="display:none;">
-           <!-- currently hacked up to set params tab as first selelcted-->
-           <!-- <div class="header">Event Listeners</div> -->
            <div class="tab-content"></div>
          </div>
+         <div class="panel-tab col-100" id="life-cycle-tab">
+            <div class="tab-content"></div>
+          </div>
        </div>
      </div>
    </div>
