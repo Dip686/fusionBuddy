@@ -40,8 +40,8 @@ body {
 }
 
 .timetravel-footer .state-list-holder ul>li {
-  border: 1px solid black;
-  padding: 10px 0;
+  border-bottom: 1px solid black;
+  padding: 10px;
   margin: 2px 0;
   color: black;
   background-color: white;
@@ -64,7 +64,17 @@ body {
 .header {
   color: white;
   background-color: rgb(93, 98, 181);;
-  height: 45px;
+  height: 5rem;
+  line-height: 40px;
+  font-size: 12px;
+  cursor: pointer;
+  text-align: center;
+  width: 100%;
+}
+.time-travel-header {
+  color: white;
+  background-color: rgb(93, 98, 181);;
+  height: 40px;
   line-height: 40px;
   font-size: 14px;
   cursor: pointer;
@@ -119,7 +129,7 @@ body {
 .toolbar {
 	color: white;
   background-color: rgb(93, 98, 181);;
-  height: 45px;
+  height: 40px;
   line-height: 40px;
   cursor: pointer;
 	text-align: center;
@@ -135,5 +145,5 @@ body {
 #refresh-btn {
 	float: right;
 	line-height: 40px;
-	font-size: 14px;
+	font-size: 12px;
 }
