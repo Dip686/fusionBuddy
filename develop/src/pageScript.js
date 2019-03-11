@@ -7,6 +7,23 @@
 	lifeCycleLog.getEventsSorted = getEventsSorted;
 	lifeCycleLog.getEventCount = getEventCount;
 	lifeCycleLog._components = {};
+ 
+  /**
+	 * We get this event from background.js 
+	 * It tells the pageScript to scrape chart data from the page on whcih this
+	 * is running
+	 */
+  window.addEventListener('GET_CHARTS', function getChartsInPage(event) {
+  //You can also use dispatchEvent
+  console.log('inside pageScript window.', event);
+  let tree = getComponentTree(FusionCharts.items),
+    lifeCycleObj = JSON.parse(JSON.stringify(lifeCycleLog));
+  //   componentId = event.detail && event.detail.id;
+  // if (componentId) {
+  //   lifeCycleObj = lifeCycleLog[componentId];
+  // }
+  window.postMessage({action: 'GOT_CHARTS', payload: {tree, lifeCycleObj}}, '*');
+}, false);
 
 	eventRegister.fetchEventsLog = fetchEventsLog;
 
@@ -20,21 +37,6 @@
 	} catch (err) {
 		// suppressing error for other pages which does not hold FusionChart var
 	}
-
-	/**
-	 * We get this event from background.js 
-	 * It tells the pageScript to scrape chart data from the page on whcih this
-	 * is running
-	 */
-	window.addEventListener('GET_CHARTS', function getChartsInPage(event) {
-		let tree = getComponentTree(FusionCharts.items),
-			lifeCycleObj = {},
-			componentId = event.detail && event.detail.id;
-		if (componentId) {
-			lifeCycleObj = lifeCycleLog[componentId];
-		}
-		window.postMessage({ action: 'GOT_CHARTS', payload: { tree, lifeCycleObj } }, '*');
-	}, false);
 
 	FusionCharts.addEventListener('*', function registerEventLogs(e) {
 		registerEvents(e);
@@ -101,6 +103,25 @@
 		}
 		return true;
 	}
+  
+function logEvent (e) {
+  const key = e.sender.getId ? e.sender.getId() : e.sender.id;
+  let meta = lifeCycleLog[key];
+  if (!meta) {
+    meta = { eventStream: [] };
+    lifeCycleLog[key] = meta;
+  }
+  meta[e.type] = meta[e.type] ? meta[e.type] + 1 : 1;
+  /**
+   * eventStream is like a list of events that has happened on this component
+   * throughout it's lifecycle
+  */
+  meta.eventStream.push({
+    type: e.type,
+    timestamp: Date.now(),
+    now: new Date()
+  });
+}
 
 	/**
 	 * The raw  config object in FC charts or components are not serialized properly
@@ -185,23 +206,6 @@
 		};
 	}
 
-	function logEvent(e) {
-		const key = e.sender.getId ? e.sender.getId() : e.sender.id;
-		let meta = lifeCycleLog[key];
-		if (!meta) {
-			meta = { eventStream: [] };
-			lifeCycleLog[key] = meta;
-		}
-		meta[e.type] = meta[e.type] ? meta[e.type] + 1 : 1;
-		/**
-		 * eventStream is like a list of events that has happened on this component
-		 * throughout it's lifecycle
-		 */
-		meta.eventStream.push({
-			type: e.type,
-			timestamp: Date.now()
-		});
-	}
 	function getEventsSorted(componentId, eventName) {
 		if (!!!componentId || !lifeCycleLog[componentId]) {
 			console.log(`Invalid component ID requested method#getEventsSorted ID#${componentId}`);
