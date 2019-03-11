@@ -155,6 +155,10 @@ function setPanelComponentsStateOnEvents(eventToRegister) {
 	panelContext._eventRegister.push(eventToRegister);
 	timeTravelLog(eventToRegister);
 }
+/**
+ * Adds an <li> to visual state-list <ul> 
+ * @param {eventRegisterObject} e 
+ */
 function timeTravelLog(e) {
 	var stateListUL = panelContext.$stateListUl;
 	if (!stateListUL) {
@@ -162,10 +166,20 @@ function timeTravelLog(e) {
 		panelContext.$stateListUL = stateListUL;
 	}
 
-	var newLi = document.createElement('li');
-	newLi.textContent = `${e.eventId} on component ${e.referenceId}`;
+	var newLiEvt = document.createElement('li');
+	newLiEvt.innerHTML = 
+	`
+		Event: ${e.eventId}
+	`;
+	var newLiComp = document.createElement('li');
+	newLiComp.innerHTML = 
+	`
+		Component: ${e.referenceId}
+	`;
+	newLiComp.classList.add('component-id-li');
 
-	stateListUL.appendChild(newLi);
+	stateListUL.appendChild(newLiEvt);
+	stateListUL.appendChild(newLiComp);
 	//Always scroll to bottom of the list continuously on update
 	// if (stateListUL.scrollTop < stateListUL.scrollHeight - stateListUL.clientHeight) {
 		stateListUL.scrollTop = stateListUL.scrollHeight;

@@ -39,6 +39,24 @@ body {
   overflow-y: scroll;
 }
 
+.timetravel-footer .state-list-holder ul>li {
+  border: 1px solid black;
+  padding: 10px 0;
+  margin: 2px 0;
+  color: black;
+  background-color: white;
+}
+
+.timetravel-footer .component-id-li {
+  font-weight: bold;
+}
+
+.timetravel-footer .state-list-holder ul>li:hover {
+  color: white;
+  background-color: rgb(142, 150, 99);
+  cursor: pointer;
+}
+
 #data-section {
   border-left: 1px solid black;
 }
@@ -48,7 +66,7 @@ body {
   background-color: rgb(93, 98, 181);;
   height: 45px;
   line-height: 40px;
-  font-size: 16px;
+  font-size: 14px;
   cursor: pointer;
   text-align: center;
   width: 100%;
@@ -95,8 +113,6 @@ body {
 
 .switch-tab-button {
  padding: 0 10px;
- border-left: 1px solid white;
- border-right: 1px solid white;
  height: 45px;
 }
 
@@ -112,12 +128,12 @@ body {
 }
 
 .toolbar .toolbar-title {
-	line-height: 6vh;
-	font-size: 16px;
+	line-height: 40px;
+	font-size: 14px;
 }
 
 #refresh-btn {
 	float: right;
 	line-height: 40px;
-	font-size: 16px;
+	font-size: 14px;
 }
