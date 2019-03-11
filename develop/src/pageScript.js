@@ -7,14 +7,29 @@
 	lifeCycleLog.getEventsSorted = getEventsSorted;
 	lifeCycleLog.getEventCount = getEventCount;
 	lifeCycleLog._components = {};
+
+	try {
+		/**
+		* Listening to all events thrown by fusionCharts on any
+		* fusionCharts component and
+		* logging them. This ensures we have lifecycle track of all components  
+		*/
+		FusionCharts.addEventListener('*', function registerEventLogs(e) {
+			var registeredEvt = registerEvents(e);
+			logEvent(e);
+			window.postMessage({ action: 'GOT_EVENTS', payload: registeredEvt }, '*');
+		});
+	} catch (err) {
+		// suppressing error for other pages which does not hold FusionChart var
+	}
  
   /**
 	 * We get this event from background.js 
-	 * It tells the pageScript to scrape chart data from the page on whcih this
+	 * It tells the pageScript to scrape chart data fromsthe page on whcih this
 	 * is running
 	 */
   window.addEventListener('GET_CHARTS', function getChartsInPage(event) {
-  //You can also use dispatchEvent
+  //You can also use dispatchEventIs
   console.log('inside pageScript window.', event);
   let tree = getComponentTree(FusionCharts.items),
     lifeCycleObj = JSON.parse(JSON.stringify(lifeCycleLog));
@@ -26,22 +41,6 @@
 }, false);
 
 	eventRegister.fetchEventsLog = fetchEventsLog;
-
-	try {
-		/**
-		* Listening to all events thrown by fusionCharts on any
-		* fusionCharts component and
-		* logging them. This ensures we have lifecycle track of all components  
-		*/
-		FusionCharts.addEventListener('*', logEvent);
-	} catch (err) {
-		// suppressing error for other pages which does not hold FusionChart var
-	}
-
-	FusionCharts.addEventListener('*', function registerEventLogs(e) {
-		registerEvents(e);
-		window.postMessage({ action: 'GOT_EVENTS', payload: eventRegister.eventLog }, '*');
-	});
 
 	/**
 	 * 
@@ -243,14 +242,18 @@ function logEvent (e) {
 	}
 	function registerEvents(e) {
 		if (e.sender) {
-			eventRegister.eventLog.push({
+			const evtDetail = {
 				eventId: e.type,
 				// reference: e.sender.apiInstance || e.sender,
 				referenceId: e.sender.apiInstance ? e.sender.apiInstance.getId ? e.sender.apiInstance.getId() : e.sender.apiInstance.id :
 					e.sender ? e.sender.getId ? e.sender.getId() : e.sender.id : {}
-			});
-		}
+			};
 
+			eventRegister.eventLog.push(evtDetail);
+
+			return evtDetail;
+		}
+		return {};
 	}
 	function fetchEventsLog(eventId = 'all', componentId = 'all') {
 		let eventLog = eventRegister.eventLog;

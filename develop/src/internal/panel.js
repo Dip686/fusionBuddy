@@ -10,7 +10,9 @@ const panelContext = {
 	currentSelectedComponentId: null,
 	currentSelectedComponent: {},
 	currentSelectedComponentLifecycle: {},
-	_components: {}
+	_components: {},
+	_eventRegister: [],
+	$stateListUl: null
 };
 //The first postMessage to background, background will relay it across horizon to
 //our page.
@@ -19,7 +21,7 @@ panelPort && panelPort.postMessage({ type: 'GET_CHARTS', payload: {} });
 //play as mediator
 panelPort.onMessage.addListener(function (msg) {
 	if (msg.type === 'GOT_EVENTS') {
-		console.log('msg received events', msg);
+		setPanelComponentsStateOnEvents(msg.payload);
 	} else if (msg.type === 'GOT_CHARTS') {
 		let components = msg.payload.tree,
 			compInnerHTML,
@@ -38,17 +40,17 @@ panelPort.onMessage.addListener(function (msg) {
 		componentViewID.appendChild(tempDiv);
 
 		compInnerHTML = `<ul><li data-component-id="${components.id}">chart ${compInnerHTML} </li></ul>`;
-		
+
 		document.getElementById('jstree_demo_div').innerHTML = compInnerHTML;
 		jsTreeObj = $('#jstree_demo_div').jstree({});
-		
+
 		//Setting eventListeners to the nodes of js tree
 		$("#jstree_demo_div").on("changed.jstree", function (evt, data) {
 			var selectedComponentId = $('#' + data.selected[0]).data('component-id');
 			setSelectedComponentId(selectedComponentId);
 			setSelectedTab('#params-tab');
 			// fetchFreshDataForComponent(panelContext.currentSelectedComponentId);
-			
+
 		});
 		$('.switch-tab-button').off();
 		$('.switch-tab-button').on('click', function () {
@@ -117,8 +119,8 @@ function selectTabInternal() {
 			dataToShow = panelContext.currentSelectedComponent ? pluckEventsInfo(panelContext.currentSelectedComponent) : {};
 			break;
 		case "#life-cycle-tab":
-      dataToShow = panelContext.currentSelectedComponentLifecycle[panelContext.currentSelectedComponentId] || {};
-      !isEmpty(dataToShow) && (dataToShow.eventsInOrder = orderEvents(dataToShow));
+			dataToShow = panelContext.currentSelectedComponentLifecycle[panelContext.currentSelectedComponentId] || {};
+			!isEmpty(dataToShow) && (dataToShow.eventsInOrder = orderEvents(dataToShow));
 			break;
 	}
 
@@ -129,12 +131,12 @@ function selectTabInternal() {
 function init() {
 	setSelectedTab('#params-tab');
 }
-function orderEvents (dataToShow) {
-  if (dataToShow.eventStream) {
-    const reducer = (accumulator, currentValue) => accumulator + ', ' + currentValue.type;
-    return dataToShow.eventStream.reduce(reducer, '').replace(', ','');
-  }
-  return '';
+function orderEvents(dataToShow) {
+	if (dataToShow.eventStream) {
+		const reducer = (accumulator, currentValue) => accumulator + ', ' + currentValue.type;
+		return dataToShow.eventStream.reduce(reducer, '').replace(', ', '');
+	}
+	return '';
 }
 function setPanelComponentsData(components) {
 	panelContext._components = components;
@@ -142,6 +144,32 @@ function setPanelComponentsData(components) {
 }
 function setPanelComponentsLifecylceData(lifeCycleObj) {
 	panelContext.currentSelectedComponentLifecycle = lifeCycleObj || {};
+}
+/**
+ * Whenever some action happens on a chart on the page,
+ * pageScript, through background.js let's us know about state changes and action name.
+ * We are storing that in our panel.js to allow time-travel debugging in future
+ * @param {any} eventToRegister 
+ */
+function setPanelComponentsStateOnEvents(eventToRegister) {
+	panelContext._eventRegister.push(eventToRegister);
+	timeTravelLog(eventToRegister);
+}
+function timeTravelLog(e) {
+	var stateListUL = panelContext.$stateListUl;
+	if (!stateListUL) {
+		stateListUL = document.getElementById('state-list');
+		panelContext.$stateListUL = stateListUL;
+	}
+
+	var newLi = document.createElement('li');
+	newLi.textContent = `${e.eventId} on component ${e.referenceId}`;
+
+	stateListUL.appendChild(newLi);
+	//Always scroll to bottom of the list continuously on update
+	// if (stateListUL.scrollTop < stateListUL.scrollHeight - stateListUL.clientHeight) {
+		stateListUL.scrollTop = stateListUL.scrollHeight;
+	// }      
 }
 function getComponentById(components, id) {
 	for (let prop in components) {

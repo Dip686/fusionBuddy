@@ -26,18 +26,32 @@ body {
   text-align: center;
 }
 
+.height-100 {
+  height: 100%;
+}
+
+.timetravel-footer {
+  height: 500px;
+}
+
+.timetravel-footer .state-list-holder {
+  max-height: 80%;
+  overflow-y: scroll;
+}
+
 #data-section {
   border-left: 1px solid black;
 }
 
 .header {
   color: white;
-  background-color: chocolate;
-  height: 8vh;
-  line-height: 6vh;
-  font-size: 20px;
+  background-color: rgb(93, 98, 181);;
+  height: 45px;
+  line-height: 40px;
+  font-size: 16px;
   cursor: pointer;
   text-align: center;
+  width: 100%;
 }
 
 .layout-row {
@@ -83,15 +97,18 @@ body {
  padding: 0 10px;
  border-left: 1px solid white;
  border-right: 1px solid white;
+ height: 45px;
 }
 
 .toolbar {
 	color: white;
-    background-color: chocolate;
-    height: 8vh;
-    cursor: pointer;
+  background-color: rgb(93, 98, 181);;
+  height: 45px;
+  line-height: 40px;
+  cursor: pointer;
 	text-align: center;
 	padding-left: 20px; 
+	padding-right: 20px; 
 }
 
 .toolbar .toolbar-title {
@@ -101,6 +118,6 @@ body {
 
 #refresh-btn {
 	float: right;
-	line-height: 6vh;
+	line-height: 40px;
 	font-size: 16px;
 }
