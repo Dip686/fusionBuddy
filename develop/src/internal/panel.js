@@ -181,9 +181,10 @@ function timeTravelLog(e) {
 	stateListUL.appendChild(newLiEvt);
 	stateListUL.appendChild(newLiComp);
 	//Always scroll to bottom of the list continuously on update
-	// if (stateListUL.scrollTop < stateListUL.scrollHeight - stateListUL.clientHeight) {
-		stateListUL.scrollTop = stateListUL.scrollHeight;
-	// }      
+	stateListUL.parentElement.scrollTo({
+		top:stateListUL.scrollHeight,
+		behavior: 'smooth'
+	});      
 }
 function getComponentById(components, id) {
 	for (let prop in components) {
