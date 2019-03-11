@@ -1,6 +1,10 @@
+//panelPort stores connection of the chrome-extention's panel to the chrome runtime
+//environment. This is a stay-alive connection.
 let panelPort = chrome.runtime.connect({
 	name: 'panel-commn'
 });
+//panelContext saves the current state of the panel,
+//For example, which tab is selected, which component is selected, etc
 const panelContext = {
 	currentSelectedTab: '#params-tab',
 	currentSelectedComponentId: null,
@@ -8,9 +12,11 @@ const panelContext = {
 	currentSelectedComponentLifecycle: {},
 	_components: {}
 };
-
+//The first postMessage to background, background will relay it across horizon to
+//our page.
 panelPort && panelPort.postMessage({ type: 'GET_CHARTS', payload: {} });
-
+//This listener handles messages to this panel from our page through the background.js 
+//play as mediator
 panelPort.onMessage.addListener(function (msg) {
 	if (msg.type === 'GOT_EVENTS') {
 		console.log('msg received events', msg);
