@@ -16,5 +16,4 @@ Follow the given steps to contribute.
 - Send PR!
 
 # Authors
-Dip Bhattacharyjee
-Nilarnab Mookherjee
+Dip Bhattacharjee, Nilarnab Mookherjee
