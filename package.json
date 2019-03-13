@@ -11,10 +11,34 @@
     "url": "git+https://github.com/Dip686/fusionBuddy.git"
   },
   "keywords": [
-    "fc-devtools"
+    "fc-devtools",
+    "fusioncharts",
+    "dip686",
+    "yakuzaaaa",
+    "dip bhattacharjee",
+    "nilarnab mookherjee",
+    "fc",
+    "chrome-extension",
+    "extension",
+    "chrome",
+    "devtool",
+    "panel",
+    "devpanel",
+    "chrome devtool"
   ],
-  "author": "Dip Bhattacharjee and Nilarnab Mookherjee",
-  "license": "MIT",
+  "author": {
+    "name": "Dip Bhattacharjee",
+    "email": "dip686@gmail.com",
+    "url": "https://www.linkedin.com/in/dip-bhattacharjee/"
+  },
+  "contributors": [
+    {
+      "name": "Nilarnab Mookherjee",
+      "email": "nilarnab.mookherjee@gmail.com",
+      "url": "https://in.linkedin.com/in/nilarnab"
+    }
+  ],
+  "license": "UNLICENSED",
   "bugs": {
     "url": "https://github.com/Dip686/fusionBuddy/issues"
   },
