@@ -1,4 +1,5 @@
 import JSONFormatter from 'json-formatter-js';
+import { GOT_CHARTS, GOT_EVENTS, GET_CHARTS } from '../utilities/constants';
 
 //panelPort stores connection of the chrome-extention's panel to the chrome runtime
 //environment. This is a stay-alive connection.
@@ -18,13 +19,13 @@ const panelContext = {
 };
 //The first postMessage to background, background will relay it across horizon to
 //our page.
-panelPort && panelPort.postMessage({ type: 'GET_CHARTS', payload: {} });
+panelPort && panelPort.postMessage({ type: GET_CHARTS, payload: {} });
 //This listener handles messages to this panel from our page through the background.js 
 //play as mediator
 panelPort.onMessage.addListener(function (msg) {
-	if (msg.type === 'GOT_EVENTS') {
+	if (msg.type === GOT_EVENTS) {
 		setPanelComponentsStateOnEvents(msg.payload);
-	} else if (msg.type === 'GOT_CHARTS') {
+	} else if (msg.type === GOT_CHARTS) {
 		let components = msg.payload.tree,
 			compInnerHTML,
 			jsTreeObj,
