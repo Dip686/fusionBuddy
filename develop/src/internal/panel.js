@@ -1,3 +1,5 @@
+import JSONFormatter from 'json-formatter-js';
+
 //panelPort stores connection of the chrome-extention's panel to the chrome runtime
 //environment. This is a stay-alive connection.
 let panelPort = chrome.runtime.connect({
@@ -124,7 +126,7 @@ function selectTabInternal() {
 			break;
 	}
 
-	const jsonFormatter = new JSONFormatter.default(dataToShow);
+	const jsonFormatter = new JSONFormatter(dataToShow);
 	dataSection.find(panelContext.currentSelectedTab)
 		.find('.tab-content').html(jsonFormatter.render());
 }

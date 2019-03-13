@@ -61,11 +61,15 @@ body {
   border-left: 1px solid black;
 }
 
+.component-view-parent {
+  overflow: hidden;
+}
+
 .header {
   color: white;
   background-color: rgb(93, 98, 181);;
-  height: 5rem;
-  line-height: 40px;
+  height: 45px;
+  line-height: 45px;
   font-size: 12px;
   cursor: pointer;
   text-align: center;
@@ -74,7 +78,7 @@ body {
 .time-travel-header {
   color: white;
   background-color: rgb(93, 98, 181);;
-  height: 40px;
+  height: 45px;
   line-height: 40px;
   font-size: 14px;
   cursor: pointer;
@@ -129,7 +133,7 @@ body {
 .toolbar {
 	color: white;
   background-color: rgb(93, 98, 181);;
-  height: 40px;
+  height: 45px;
   line-height: 40px;
   cursor: pointer;
 	text-align: center;

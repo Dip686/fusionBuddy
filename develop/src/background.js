@@ -37,12 +37,3 @@ chrome.runtime.onConnect.addListener(function(portFrom) {
       });
     }
 });
-
-// chrome.extension.onConnect.addListener(function (port) {
-//   console.log('inside background chrome.extension.onConnect');
-//     chrome.tabs.query({active: true, currentWindow: true}, function (tab) {
-//     console.log('activetab', tab);
-//     activeTab = tab[0].id;
-//     // chrome.tabs.sendMessage(activeTab,{action: 'GET_CHARTS'});
-//   });
-// });
