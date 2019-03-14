@@ -193,7 +193,7 @@ function getComponentById(components, id) {
 	for (let prop in components) {
 		if (components.hasOwnProperty(prop)) {
 			const component = components[prop];
-			if (prop === id) {
+			if (prop === id && component.config) {
 				//Found it
 				return component;
 			} else {
