@@ -116,7 +116,7 @@ function selectTabInternal() {
 	let dataToShow = {};
 	switch (panelContext.currentSelectedTab) {
 		case "#params-tab":
-			dataToShow = panelContext.currentSelectedComponent;
+			dataToShow = panelContext.currentSelectedComponent.config || {};
 			break;
 		case "#events-tab":
 			dataToShow = panelContext.currentSelectedComponent ? pluckEventsInfo(panelContext.currentSelectedComponent) : {};
