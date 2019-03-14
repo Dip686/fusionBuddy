@@ -19,7 +19,8 @@ export function isEmpty(obj) {
  * @param {any} items - An object having list of charts on the page 
  */
 export function getComponentTree(items) {
-  let tree;
+  let charts = {},
+    tree;
   for (let item in items) {
     if (items.hasOwnProperty(item)) {
       const chartItem = items[item];
@@ -27,9 +28,11 @@ export function getComponentTree(items) {
       tree.evtListeners = getAllListenersOnChart(chartItem);
       tree.evtExtListeners = [];
       tree.id = getComponentId(items[item]);
+      charts[tree.id] = tree;
     }
   }
-  return tree;
+  charts.id = 'dummy_id';
+  return charts;
 }
 
 /**

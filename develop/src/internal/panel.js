@@ -26,7 +26,7 @@ panelPort.onMessage.addListener(function (msg) {
 	if (msg.type === GOT_EVENTS) {
 		setPanelComponentsStateOnEvents(msg.payload);
 	} else if (msg.type === GOT_CHARTS) {
-		let components = msg.payload.tree,
+		let components = msg.payload.charts,
 			compInnerHTML,
 			jsTreeObj,
 			componentViewID = document.getElementById('component-view-parent');
@@ -193,7 +193,7 @@ function getComponentById(components, id) {
 	for (let prop in components) {
 		if (components.hasOwnProperty(prop)) {
 			const component = components[prop];
-			if (prop === id && component.config) {
+			if (prop === id) {
 				//Found it
 				return component;
 			} else {

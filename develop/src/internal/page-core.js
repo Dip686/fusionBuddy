@@ -26,8 +26,8 @@ export default class PageCore {
   }
 
   onGetChartsEvent(e) {
-    const tree = getComponentTree(FusionCharts.items),
+    const charts = getComponentTree(FusionCharts.items),
       lifeCycleObj = JSON.parse(JSON.stringify(this.store.lifeCycleLog));
-    postWindowMessage(GOT_CHARTS, {tree, lifeCycleObj});
+    postWindowMessage(GOT_CHARTS, {charts, lifeCycleObj});
   }
 }
