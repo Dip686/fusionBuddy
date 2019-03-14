@@ -9,6 +9,7 @@ var options = {
     panel: `${__dirname}/develop/src/internal/panel.js`,
     pageScript: `${__dirname}/develop/src/pageScript.js`
   },
+  devtool: 'source-map',
   output: {
     path: path.join(__dirname, "build", "chrome-ext"),
     filename: "[name].js"
