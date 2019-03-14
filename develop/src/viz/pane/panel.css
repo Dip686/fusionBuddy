@@ -1,0 +1,153 @@
+html,
+body {
+  min-height: 100%;
+  margin: 0;
+}
+
+.tab-content {
+  font-size: 12px;
+  overflow: scroll;
+  padding: 10px;
+}
+
+.col-25 {
+  width: 25%;
+}
+
+.col-50 {
+  width: 50%;
+}
+
+.col-100 {
+  width: 100%;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.height-100 {
+  height: 100%;
+}
+
+.timetravel-footer {
+  height: 300px;
+}
+
+.timetravel-footer .state-list-holder {
+  max-height: 80%;
+  overflow-y: scroll;
+}
+
+.timetravel-footer .state-list-holder ul>li {
+  border-bottom: 1px solid black;
+  padding: 10px;
+  margin: 2px 0;
+  color: black;
+  background-color: white;
+}
+
+.timetravel-footer .component-id-li {
+  font-weight: bold;
+}
+
+.timetravel-footer .state-list-holder ul>li:hover {
+  color: white;
+  background-color: rgb(142, 150, 99);
+  cursor: pointer;
+}
+
+#data-section {
+  border-left: 1px solid black;
+}
+
+.component-view-parent {
+  overflow: hidden;
+}
+
+.header {
+  color: white;
+  background-color: rgb(93, 98, 181);;
+  height: 45px;
+  line-height: 45px;
+  font-size: 12px;
+  cursor: pointer;
+  text-align: center;
+  width: 100%;
+}
+.time-travel-header {
+  color: white;
+  background-color: rgb(93, 98, 181);;
+  height: 45px;
+  line-height: 40px;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: center;
+  width: 100%;
+}
+
+.layout-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.layout-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.justify-space-between {
+  justify-content: space-between;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-strech {
+  justify-content: stretch;
+}
+
+.justify-space-around {
+  justify-content: space-around;
+}
+
+.justify-start {
+  justify-content: flex-start;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.full-height {
+  min-height: 100vh;
+  height: 100%;
+}
+
+.switch-tab-button {
+ padding: 0 10px;
+ height: 45px;
+}
+
+.toolbar {
+	color: white;
+  background-color: rgb(93, 98, 181);;
+  height: 45px;
+  line-height: 40px;
+  cursor: pointer;
+	text-align: center;
+	padding-left: 20px; 
+	padding-right: 20px; 
+}
+
+.toolbar .toolbar-title {
+	line-height: 40px;
+	font-size: 14px;
+}
+
+#refresh-btn {
+	float: right;
+	line-height: 40px;
+	font-size: 12px;
+}
