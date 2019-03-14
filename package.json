@@ -1,0 +1,57 @@
+{
+  "name": "fusionbuddy",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Chrome devtool extension for getting better insight while debugging a FusionChart",
+  "scripts": {
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dip686/fusionBuddy.git"
+  },
+  "keywords": [
+    "fc-devtools",
+    "fusioncharts",
+    "dip686",
+    "yakuzaaaa",
+    "dip bhattacharjee",
+    "nilarnab mookherjee",
+    "fc",
+    "chrome-extension",
+    "extension",
+    "chrome",
+    "devtool",
+    "panel",
+    "devpanel",
+    "chrome devtool"
+  ],
+  "author": {
+    "name": "Dip Bhattacharjee",
+    "email": "dip686@gmail.com",
+    "url": "https://www.linkedin.com/in/dip-bhattacharjee/"
+  },
+  "contributors": [
+    {
+      "name": "Nilarnab Mookherjee",
+      "email": "nilarnab.mookherjee@gmail.com",
+      "url": "https://in.linkedin.com/in/nilarnab"
+    }
+  ],
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/Dip686/fusionBuddy/issues"
+  },
+  "homepage": "https://github.com/Dip686/fusionBuddy#readme",
+  "dependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.3.4",
+    "@babel/preset-env": "^7.3.4",
+    "@babel/preset-es2015": "^7.0.0-beta.53",
+    "babel-loader": "^8.0.5",
+    "copy-webpack-plugin": "^5.0.1",
+    "json-formatter-js": "^2.2.1",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.2.3"
+  }
+}
