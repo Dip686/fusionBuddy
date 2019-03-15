@@ -4,7 +4,8 @@
   "private": true,
   "description": "Chrome devtool extension for getting better insight while debugging a FusionChart",
   "scripts": {
-    "build": "webpack"
+    "build": "webpack",
+    "watch": "webpack --watch"
   },
   "repository": {
     "type": "git",

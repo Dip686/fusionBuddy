@@ -4,7 +4,7 @@ import { GOT_CHARTS, GOT_EVENTS, GET_CHARTS } from '../utilities/constants';
 //panelPort stores connection of the chrome-extention's panel to the chrome runtime
 //environment. This is a stay-alive connection.
 let panelPort = chrome.runtime.connect({
-	name: 'panel-commn'
+	name: '' + chrome.devtools.inspectedWindow.tabId
 });
 //panelContext saves the current state of the panel,
 //For example, which tab is selected, which component is selected, etc
@@ -22,8 +22,10 @@ const panelContext = {
 panelPort && panelPort.postMessage({ type: GET_CHARTS, payload: {} });
 //This listener handles messages to this panel from our page through the background.js 
 //play as mediator
-panelPort.onMessage.addListener(function (msg) {
+panelPort.onMessage.addListener(function (msg, sender) {
+	console.log(sender && sender.tab && sender.tab.id);
 	if (msg.type === GOT_EVENTS) {
+		console.log("GOT_EVENT");
 		setPanelComponentsStateOnEvents(msg.payload);
 	} else if (msg.type === GOT_CHARTS) {
 		let components = msg.payload.tree,

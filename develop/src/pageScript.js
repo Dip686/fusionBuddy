@@ -1,7 +1,7 @@
 import PageCore from './internal/page-core';
 import { BROWSER_CHROME, GET_CHARTS } from './utilities/constants';
 
-(function(tabWindow) {
+(function (tabWindow) {
 	//TODO detect browser
 	const pageCoreInstance = new PageCore(BROWSER_CHROME);
 	pageCoreInstance.initExtension();
@@ -24,7 +24,7 @@ import { BROWSER_CHROME, GET_CHARTS } from './utilities/constants';
 	 * It tells the pageScript to scrape chart data fromsthe page on whcih this
 	 * is running
 	 */
-  tabWindow.addEventListener(GET_CHARTS, function getChartsInPage(event) {
+	tabWindow.addEventListener(GET_CHARTS, function getChartsInPage(event) {
 		pageCoreInstance.onGetChartsEvent(event);
 	}, false);
 })(window);

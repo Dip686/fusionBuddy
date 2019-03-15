@@ -2,38 +2,62 @@
 //is disabled
 
 //Wait for some one connect to it
-let contentPort, activeTab, panelPort;
-chrome.runtime.onConnect.addListener(function(portFrom) {
-   if(portFrom.name === 'background-content') {
-     contentPort = portFrom;
-     contentPort.onMessage.addListener(function(message) {
-        if (message.type ==='GOT_CHARTS') {
-          postMessageToPanel({type: 'GOT_CHARTS', payload: message.payload});
-        }else if (message.type === 'GOT_EVENTS') {
-          postMessageToPanel({type: 'GOT_EVENTS', payload: message.payload});
-        }
-      });
-    }else if (portFrom.name === 'panel-commn') {
-      panelPort = portFrom;
-      panelPort.onMessage.addListener(function(message) {
-        if (message.type === "GET_UPDATED_DATA") {
-          let componentId = message.payload.componentId;
-          chrome.tabs.query({active: true, currentWindow: true}, function (tab) {
-            activeTab = tab[0].id;
-            chrome.tabs.sendMessage(activeTab,{action: `GET_CHARTS_${componentId}`});
-          });
-        } else if (message.type === "GET_CHARTS"){
-          chrome.tabs.query({active: true, currentWindow: true}, function (tab) {
-            activeTab = tab[0].id;
-            chrome.tabs.sendMessage(activeTab,{action: `GET_CHARTS`});
-          });
-        }
-      });
-    }
+var ports = {};
+// let contentPort, activeTab, panelPort;
+chrome.runtime.onConnect.addListener(function (port) {
+  var tab = null;
+  var name = null;
+  if (isNumeric(port.name)) {
+    tab = port.name;
+    name = 'devtools';
+    // installContentScript(+port.name);
+    console.log('Devtools connected');
+  } else {
+    tab = port.sender.tab.id;
+    name = 'content-script';
+    console.log('Content script connected');
+  }
+
+  if (!ports[tab]) {
+    ports[tab] = {
+      devtools: null,
+      'content-script': null,
+    };
+  }
+  ports[tab][name] = port;
+
+  if (ports[tab].devtools && ports[tab]['content-script']) {
+    doublePipe(ports[tab].devtools, ports[tab]['content-script']);
+  }
 });
 
+function doublePipe(one, two) {
+  one.onMessage.addListener(lOne);
+  function lOne(message) {
+    // console.log('dv -> rep', message);
+    two.postMessage(message);
+  }
+  two.onMessage.addListener(lTwo);
+  function lTwo(message) {
+    // console.log('rep -> dv', message);
+    one.postMessage(message);
+  }
+  function shutdown() {
+    one.onMessage.removeListener(lOne);
+    two.onMessage.removeListener(lTwo);
+    one.disconnect();
+    two.disconnect();
+  }
+  // one.onDisconnect.addListener(shutdown);
+  // two.onDisconnect.addListener(shutdown);
+}
+
+function isNumeric(str) {
+  return +str + '' === str;
+}
+
 function postMessageToPanel(message) {
-  if(panelPort) {
+  if (panelPort) {
     panelPort.postMessage(message);
   }
 }

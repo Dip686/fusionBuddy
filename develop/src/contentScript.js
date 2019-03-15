@@ -1,6 +1,6 @@
 // start connection in content script
 let contentPort = chrome.runtime.connect({
-	name: 'background-content'
+	name: 'content-script'
 });
 //Append your pageScript.js to "real" webpage. So will it can full access to webpate.
 var s = document.createElement('script');
@@ -11,35 +11,42 @@ s.src = chrome.extension.getURL('pageScript.js');
 //you may want to keep it.
 // s.parentNode.removeChild(s);
 
-//Listen for runtime message
-chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-	console.log('inside contentscript chrome.runtime.onMessage.', message);
-	if (message.action === 'GET_CHARTS') {
-		//fire an event to get duck
-		console.log('dispatcing events', message);
-		let event = new CustomEvent('GET_CHARTS');
-		window.dispatchEvent(event);
-		return true;
-	}
-	else if (message.action.includes('GET_CHARTS')) {
-		//fire an event to get duck
-		console.log('dispatcing events', message);
-		let event = new CustomEvent('GET_CHARTS', {
-			detail: {
-				id: message.action.replace('GET_CHARTS_', '')
-			}
-		});
-		window.dispatchEvent(event);
-		return true;
-	}
-});
+//For any communication from devtools to contentScript via background 
+contentPort.onMessage.addListener(handleMessageFromDevtools);
+//For any window events from page to this contentScript
+window.addEventListener('message', handleMessageFromPage, false);
 
-window.addEventListener('message', function receiveChart(event) {
+
+function handleMessageFromDevtools(message) {
+	if (message.type === 'GET_CHARTS') {
+		onGetCharts(message);
+	} else if (message.type === "GET_UPDATED_DATA") {
+		onGetChartsByComponentId(message.payload.componentId);
+	} else if (message.type.includes('GET_CHARTS')) {
+		onGetChartsByComponentId(message.type.replace('GET_CHARTS_', ''));
+	}
+}
+
+function handleMessageFromPage(event) {
 	if (event.data.action === 'GOT_CHARTS') {
-		//Remove this listener, but you can keep it depend on your case
-		//  window.removeEventListener('message', receiveDuck, false);
 		contentPort.postMessage({ type: 'GOT_CHARTS', payload: event.data.payload });
 	} else if (event.data.action === 'GOT_EVENTS') {
 		contentPort.postMessage({ type: 'GOT_EVENTS', payload: event.data.payload });
 	}
-}, false);
+}
+
+function onGetCharts(message) {
+	let event = new CustomEvent('GET_CHARTS');
+	window.dispatchEvent(event);
+	return true;
+}
+
+function onGetChartsByComponentId(id) {
+	let event = new CustomEvent('GET_CHARTS', {
+		detail: {
+			id
+		}
+	});
+	window.dispatchEvent(event);
+	return true;
+}
