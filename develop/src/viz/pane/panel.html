@@ -8,43 +8,52 @@
 	<script src="../../vendors/jquery/jquery.min.js"></script>
 	<link rel="stylesheet" href="../../vendors/jstree/assets/themes/default/style.min.css" />
 	<script src="../../vendors/jstree/assets/jstree.min.js"></script>
-	<link rel="stylesheet" href="./panel.css" />
+	<link rel="stylesheet" href="../../vendors/fcstyles/fcstyle.css" />
 </head>
 
 <body>
-	<div class="component-container">
-		<div class="layout-row justify-space-between full-height">
-			<div id="component-view-parent" class="col-50">
-				<div class="toolbar">
-					<span class="toolbar-title">Fusion Buddy</span>
-					<span id="refresh-btn">Refresh</i></span>
-				</div>
+	<div class="">
+		<div class="row">
+			<div id="component-view-parent" class="col-sm-6">
+				<nav class="navbar navbar-expand-lg navbar-light bg-light">
+					<a class="navbar-brand" href="#">Fusion Buddy</a>
+					<div class="float-right">
+						<button class="btn btn-outline-success" type="submit">Refresh</button>
+					</div>
+					<!-- <span id="refresh-btn">Refresh</i></span> -->
+				</nav>
 				<div id="jstree_demo_div"></div>
 			</div>
-			<div class="layout-column col-50 justify-space-between" id="data-section">
-				<div class="header col-100 layout-row text-center justify-space-around">
-					<div class="switch-tab-button" data-tab-id="#params-tab">
-						Configurations
+			<div class="col-sm-6" id="data-section">
+				<div class="col-sm-12">
+					<ul class="nav nav-tabs">
+							<li class="nav-item switch-tab-button" data-tab-id="#params-tab">
+								<a class="nav-link active" href="#">Configurations</a>
+							</li>
+							<li class="nav-item switch-tab-button" data-tab-id="#events-tab">
+								<a class="nav-link" href="#">Event Listeners</a>
+							</li>
+							<li class="nav-item switch-tab-button" data-tab-id="#life-cycle-tab">
+								<a class="nav-link" href="#">Lifecycle Log</a>
+							</li>
+					</ul>
+					<div class="">
+						<div class="" id="params-tab">
+							<div class="tab-content"></div>
+						</div>
+						<div class="" id="events-tab" style="display:none;">
+							<div class="tab-content"></div>
+						</div>
+						<div class="" id="life-cycle-tab">
+							<div class="tab-content"></div>
+						</div>
 					</div>
-					<div class="switch-tab-button" data-tab-id="#events-tab">Event Listeners</div>
-					<div class="switch-tab-button" data-tab-id="#life-cycle-tab">Lifecycle Log</div>
-				</div>
-				<div class="layout-row col-100 height-100">
-					<div class="panel-tab col-100" id="params-tab">
-						<div class="tab-content"></div>
-					</div>
-					<div class="panel-tab col-100" id="events-tab" style="display:none;">
-						<div class="tab-content"></div>
-					</div>
-					<div class="panel-tab col-100" id="life-cycle-tab">
-						<div class="tab-content"></div>
-					</div>
-				</div>
-				<div class="timetravel-footer col-100">
-					<div class="time-travel-header text-center">
+				</div>	
+				<div class="class-col-sm-12">
+					<div class="">
 						Time Travel
 					</div>
-					<div class="state-list-holder">
+					<div class="">
 						<ul id="state-list"></ul>
 					</div>
 				</div>
