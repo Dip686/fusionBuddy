@@ -1,5 +1,5 @@
 import PageCore from './internal/page-core';
-import { BROWSER_CHROME, GET_CHARTS } from './utilities/constants';
+import { BROWSER_CHROME, GET_CHARTS, HIGHLIGHT_COMPONENT } from './utilities/constants';
 
 (function (tabWindow) {
 	//TODO detect browser
@@ -26,5 +26,9 @@ import { BROWSER_CHROME, GET_CHARTS } from './utilities/constants';
 	 */
 	tabWindow.addEventListener(GET_CHARTS, function getChartsInPage(event) {
 		pageCoreInstance.onGetChartsEvent(event);
+	}, false);
+
+	tabWindow.addEventListener(HIGHLIGHT_COMPONENT, function highlighComponents(event) {
+		pageCoreInstance.onHighlightComponentById(event);
 	}, false);
 })(window);

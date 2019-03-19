@@ -1,5 +1,5 @@
 import JSONFormatter from 'json-formatter-js';
-import { GOT_CHARTS, GOT_EVENTS, GET_CHARTS } from '../utilities/constants';
+import { GOT_CHARTS, GOT_EVENTS, GET_CHARTS, HIGHLIGHT_COMPONENT } from '../utilities/constants';
 
 //panelPort stores connection of the chrome-extention's panel to the chrome runtime
 //environment. This is a stay-alive connection.
@@ -55,8 +55,15 @@ panelPort.onMessage.addListener(function (msg, sender) {
 			setSelectedComponentId(selectedComponentId);
 			setSelectedTab('#params-tab');
 			// fetchFreshDataForComponent(panelContext.currentSelectedComponentId);
-
+			fireHighlightEvent(selectedComponentId);
 		});
+
+		// $('#jstree_demo_div').on("certainEvent", function onCertainEvent(e,data) {
+		// 	var hoveredNode = "someNode";
+		// 	//Lets tell background about this
+
+		// });
+
 		$('.switch-tab-button').off();
 		$('.switch-tab-button').on('click', function () {
 			setSelectedTab($(this).data('tab-id'));
@@ -72,6 +79,10 @@ init();
 
 function fetchFreshDataForComponent(componentId) {
 	panelPort && panelPort.postMessage({ type: 'GET_UPDATED_DATA', payload: { componentId } });
+}
+
+function fireHighlightEvent(componentId) {
+	panelPort && panelPort.postMessage({ type: HIGHLIGHT_COMPONENT, payload: { componentId } });
 }
 
 function buildTree(components) {
