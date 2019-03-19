@@ -22,6 +22,8 @@ function handleMessageFromDevtools(message) {
 		onGetCharts(message);
 	} else if (message.type === "GET_UPDATED_DATA") {
 		onGetChartsByComponentId(message.payload.componentId);
+	} else if (message.type === 'GET_LIFE_CYCLE_LOG') {
+		onGetLifeCycleLog(message.payload.componentId);
 	} else if (message.type.includes('GET_CHARTS')) {
 		onGetChartsByComponentId(message.type.replace('GET_CHARTS_', ''));
 	}
@@ -32,6 +34,9 @@ function handleMessageFromPage(event) {
 		contentPort.postMessage({ type: 'GOT_CHARTS', payload: event.data.payload });
 	} else if (event.data.action === 'GOT_EVENTS') {
 		contentPort.postMessage({ type: 'GOT_EVENTS', payload: event.data.payload });
+	} else if (event.data.action === 'GOT_LIFE_CYCLE_LOG') {
+		console.log(event);
+		contentPort.postMessage({ type: 'GOT_LIFE_CYCLE_LOG', payload: event.data.payload });
 	}
 }
 
@@ -43,6 +48,15 @@ function onGetCharts(message) {
 
 function onGetChartsByComponentId(id) {
 	let event = new CustomEvent('GET_CHARTS', {
+		detail: {
+			id
+		}
+	});
+	window.dispatchEvent(event);
+	return true;
+}
+function onGetLifeCycleLog (id) {
+	let event = new CustomEvent('GET_LIFE_CYCLE_LOG', {
 		detail: {
 			id
 		}

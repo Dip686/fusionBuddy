@@ -3,43 +3,37 @@ import { getComponentId } from "../utilities/utils";
 export default class {
   constructor() {
     this.lifeCycleLog = {};
-    this.eventRegister = {
-      eventLog: []
-    };
   }
 
-  registerEvents(e) {
-    let evtDetail = {};
-    if (e.sender) {
-      evtDetail = {
-        eventId: e.type,
-        // reference: e.sender.apiInstance || e.sender,
-        referenceId: e.sender.apiInstance ? e.sender.apiInstance.getId ? e.sender.apiInstance.getId() : e.sender.apiInstance.id :
-          e.sender ? e.sender.getId ? e.sender.getId() : e.sender.id : {}
-      };
-
-      this.eventRegister.eventLog.push(evtDetail);
-    }
-    return evtDetail;
-  }
-
-  logLifecycle(e) {
-    const key = getComponentId(e.sender);
-    let meta = this.lifeCycleLog[key];
+  logLifecycle (e) {
+    let componentId = getComponentId(e.sender),
+      eventIndex,
+      evtDetail,
+      componentNextState = {},
+      meta = this.lifeCycleLog[componentId];
     if (!meta) {
       meta = { eventStream: [] };
-      this.lifeCycleLog[key] = meta;
+      this.lifeCycleLog[componentId] = meta;
     }
     meta[e.type] = meta[e.type] ? meta[e.type] + 1 : 1;
     /**
      * eventStream is like a list of events that has happened on this component
      * throughout it's lifecycle
     */
-    meta.eventStream.push({
+   eventIndex = meta.eventStream.push({
       type: e.type,
       timestamp: Date.now(),
-      now: new Date()
+      now: new Date(),
+      componentId,
+      state: componentNextState
     });
+    evtDetail = {
+      eventId: e.type,
+      eventIndex,
+      componentId,
+      componentNextState
+    }
+    return evtDetail;
   }
 
   getEventsSorted(componentId, eventName) {
@@ -78,23 +72,4 @@ export default class {
       return v.type;
     });
   }
-
-  fetchEventsLog(eventId = 'all', componentId = 'all') {
-		let eventLog = this.eventRegister.eventLog;
-		if (eventId.toLowerCase() === 'all' && componentId.toLowerCase() === 'all') {
-			return eventLog;
-		} else if (eventId.toLowerCase() === 'all' && componentId.toLowerCase() !== 'all') {
-			return eventLog.filter((event) => {
-				return (event.referenceId === componentId);
-			});
-		} else if (eventId.toLowerCase() !== 'all' && componentId.toLowerCase() === 'all') {
-			return eventLog.filter((event) => {
-				return (event.eventId === eventId);
-			});
-		} else {
-			return eventLog.filter((event) => {
-				return (event.eventId === eventId && event.referenceId === componentId);
-			});
-		}
-	}
 };
