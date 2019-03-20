@@ -23,7 +23,9 @@ function onHighlightComponentById(e) {
     for (let prop in graphicalElements) {
       if (graphicalElements.hasOwnProperty(prop)) {
         const element = graphicalElements[prop];
-        highlightHTMLElement(element[0].getClientRects()[0]);
+        if (element && element[0] && element[0].getClientRects) {
+          highlightHTMLElement(element[0].getClientRects()[0]);
+        }
       }
     }
   }

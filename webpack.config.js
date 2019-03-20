@@ -10,7 +10,7 @@ var options = {
     pageScript: `${__dirname}/develop/src/pageScript.js`,
     contentScript: `${__dirname}/develop/src/contentScript.js`
   },
-  devtool: 'source-map',
+  devtool: 'inline-source-map',
   output: {
     path: path.join(__dirname, "build", "chrome-ext"),
     filename: "[name].js"
