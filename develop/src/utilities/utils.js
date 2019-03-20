@@ -44,7 +44,6 @@ export function getComponentFromChart(componentId) {
 
 export function highlightHTMLElement({top,height,left,width}) {
   const highlighter = document.createElement("div");
-  removeExistingHighlights();
   highlighter.classList.add(FC_BUDDY_HIGHLIGHTER_CLASS);
   highlighter.style.position = 'fixed';
   highlighter.style.top = top + "px";
@@ -60,8 +59,8 @@ export function removeExistingHighlights() {
   // Get the element by their class name
   const oldHighlights = document.getElementsByClassName(FC_BUDDY_HIGHLIGHTER_CLASS);
   // Now remove them
-  for (var i = 0; i < oldHighlights.length; i++) {
-    oldHighlights[i].parentNode.removeChild(oldHighlights[i]);
+  while (oldHighlights.length > 0) {
+    oldHighlights[0].parentNode.removeChild(oldHighlights[0]);
   }
 }
 
@@ -96,29 +95,35 @@ export function addModule (moduleCopy) {
  * @param chart: FusionCharts chart object 
  */
 function createTree(chart) {
-  let tree = {};
-  if (!isEmpty(chart._components)) {
-    let components = chart._components;
-    for (let component in components) {
-      if (components.hasOwnProperty(component)) {
-        let compVal = components[component],
-          subTree = {};
-        if (compVal.length > 0) {
-          for (let index = 0; index < compVal.length; index++) {
-            const listenersOnComponent = getAllListenersOnComponent(compVal[index]),
-              compId = getComponentId(compVal[index]);
-            subTree[compId] = createTree(compVal[index]);
-            subTree[compId].id = compId;
-            subTree[compId].config = getConfig(compVal[index].config);
-            subTree[compId].evtListeners = listenersOnComponent.evtListeners;
-            subTree[compId].evtExtListeners = listenersOnComponent.evtExtListeners;
+  let tree = {},
+    components = chart.getChildren();
+  if (components){
+    if (!isEmpty(components)) {
+      // let components = chart._components;
+      for (let component in components) {
+        if (components.hasOwnProperty(component)) {
+          let compVal = components[component],
+            subTree = {};
+          if (compVal.elemStore) {
+            compVal = compVal.elemStore;
           }
-          tree[component] = subTree;
+          if (compVal.length > 0) {
+            for (let index = 0; index < compVal.length; index++) {
+              const listenersOnComponent = getAllListenersOnComponent(compVal[index]),
+                compId = getComponentId(compVal[index]);
+              subTree[compId] = createTree(compVal[index]);
+              subTree[compId].id = compId;
+              subTree[compId].config = getConfig(compVal[index].config);
+              subTree[compId].evtListeners = listenersOnComponent.evtListeners;
+              subTree[compId].evtExtListeners = listenersOnComponent.evtExtListeners;
+            }
+            tree[component] = subTree;
+          }
         }
       }
+    } else {
+      // return chart.getGraphicalElement();
     }
-  } else {
-    // return chart.getGraphicalElement();
   }
   return tree;
 }
