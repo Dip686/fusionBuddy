@@ -1,3 +1,5 @@
+import { FC_BUDDY_HIGHLIGHTER_CLASS } from "./constants";
+
 export function postWindowMessage(action, payload) {
   window.postMessage({ action, payload }, '*');
 }
@@ -12,6 +14,58 @@ export function isEmpty(obj) {
       return false;
   }
   return true;
+}
+
+export function getComponentFromChart(componentId) {
+  // const chart = FusionCharts.getChartsFromId(chartId);
+  // if (chart === null || chart === undefined) {
+  //   return null;
+  // }
+
+  //Check if FusionCharts exists
+  if (typeof FusionCharts === 'undefined') {
+    return null;
+  }
+  let foundComponent = null;
+  const charts = FusionCharts.items;
+  for(let prop in charts) {
+    if(charts.hasOwnProperty(prop)) {
+      const chart = charts[prop];
+      chart.apiInstance.iterateComponents((component) => {
+        const id = component.getId ? component.getId() : component.id;
+        if(id === componentId) {
+          foundComponent = component;
+        }
+      });
+    }
+  }
+  return foundComponent;
+}
+
+export function highlightHTMLElement({top,height,left,width}) {
+  const highlighter = document.createElement("div");
+
+  //Remove old highlights
+  removeExistingHighlights();
+  
+  highlighter.classList.add(FC_BUDDY_HIGHLIGHTER_CLASS);
+  highlighter.style.position = 'fixed';
+  highlighter.style.top = top + "px";
+  highlighter.style.left = left + "px";
+  highlighter.style.width = width + "px";
+  highlighter.style.height = height + "px";
+  highlighter.style.backgroundColor = 'rgba(26, 64, 202, 0.38)';
+
+  document.body.appendChild(highlighter);
+}
+
+export function removeExistingHighlights() {
+  // Get the element by their class name
+  const oldHighlights = document.getElementsByClassName(FC_BUDDY_HIGHLIGHTER_CLASS);
+  // Now remove them
+  for (var i = 0; i < oldHighlights.length; i++) {
+    oldHighlights[i].parentNode.removeChild(oldHighlights[i]);
+  }
 }
 
 /**
@@ -55,7 +109,7 @@ function createTree(chart) {
         if (compVal.length > 0) {
           for (let index = 0; index < compVal.length; index++) {
             const listenersOnComponent = getAllListenersOnComponent(compVal[index]),
-            compId = getComponentId(compVal[index]);
+              compId = getComponentId(compVal[index]);
             subTree[compId] = createTree(compVal[index]);
             subTree[compId].id = compId;
             subTree[compId].config = getConfig(compVal[index].config);
