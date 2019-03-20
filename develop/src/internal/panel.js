@@ -55,7 +55,11 @@ panelPort.onMessage.addListener(function (msg, sender) {
 			setSelectedTab('#params-tab');
 			panelPort && panelPort.postMessage({ type: 'GET_LIFE_CYCLE_LOG', payload: { componentId } });
 			// fetchFreshDataForComponent(panelContext.currentSelectedComponentId);
-			fireHighlightEvent(selectedComponentId);
+			fireHighlightEvent(componentId);
+		});
+
+		$('#jstree_demo_div').on("hover_node.jstree", function (e, data) {
+			fireHighlightEvent($('#' + data.node.id).data('component-id'));
 		});
 
 		// $('#jstree_demo_div').on("certainEvent", function onCertainEvent(e,data) {

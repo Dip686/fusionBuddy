@@ -64,6 +64,7 @@ function onHighlighComponentById(componentId, chartId) {
 	let event = new CustomEvent(HIGHLIGHT_COMPONENT, {
 		detail: {
 			componentId
+		}
 	});
 	window.dispatchEvent(event);
 	return true;
@@ -78,4 +79,3 @@ function onGetLifeCycleLog (id) {
 	  window.dispatchEvent(event);
 	  return true;
  } 
-}

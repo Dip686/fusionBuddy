@@ -1,6 +1,6 @@
-import { postWindowMessage, getComponentTree, getComponentFromChart, highlightHTMLElement, removeExistingHighlights } from "../utilities/utils";
+import { removeExistingHighlights } from "../utilities/utils";
 import Store from './store';
-import { BROWSER_CHROME, GOT_CHARTS, GOT_EVENTS } from "../utilities/constants";
+import { BROWSER_CHROME } from "../utilities/constants";
 
 export default class PageCore {
   constructor(browser) {
@@ -21,30 +21,5 @@ export default class PageCore {
     document.body.addEventListener('mouseover', function hideHighlights() {
       removeExistingHighlights();
     });
-  }
-
-  onFcEvent(e) {
-    const registeredEvent = this.store.registerEvents(e);
-    this.store.logLifecycle(e);
-    postWindowMessage(GOT_EVENTS, registeredEvent);
-  }
-
-  onGetChartsEvent(e) {
-    const charts = getComponentTree(FusionCharts.items),
-      lifeCycleObj = JSON.parse(JSON.stringify(this.store.lifeCycleLog));
-    postWindowMessage(GOT_CHARTS, {charts, lifeCycleObj});
-  }
-
-  onHighlightComponentById(e) {
-    const component = getComponentFromChart(e.detail.componentId);
-    if(component) {
-      const graphicalElements = component.getGraphicalElement();
-      for(let prop in graphicalElements) {
-        if(graphicalElements.hasOwnProperty(prop)) {
-          const element = graphicalElements[prop];
-          highlightHTMLElement(element[0].getClientRects()[0]);
-        }
-      }
-    }
   }
 }

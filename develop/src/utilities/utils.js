@@ -44,10 +44,7 @@ export function getComponentFromChart(componentId) {
 
 export function highlightHTMLElement({top,height,left,width}) {
   const highlighter = document.createElement("div");
-
-  //Remove old highlights
   removeExistingHighlights();
-  
   highlighter.classList.add(FC_BUDDY_HIGHLIGHTER_CLASS);
   highlighter.style.position = 'fixed';
   highlighter.style.top = top + "px";
