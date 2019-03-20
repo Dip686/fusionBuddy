@@ -35,6 +35,9 @@ export function getComponentTree(items) {
   return charts;
 }
 
+export function addModule (moduleCopy) {
+  return new moduleCopy();
+}
 /**
  * Creates the chart and component tree
  * This tree has the chartObject as root and the all components in

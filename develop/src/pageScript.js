@@ -1,30 +1,20 @@
-import PageCore from './internal/page-core';
-import { BROWSER_CHROME, GET_CHARTS } from './utilities/constants';
-
+import Event from './internal/events/event';
+import Config from './internal/configs/config';
+import { addModule } from  './utilities/utils';
+import  { ATTACH_LISTENERS } from './utilities/constants';
 (function (tabWindow) {
-	//TODO detect browser
-	const pageCoreInstance = new PageCore(BROWSER_CHROME);
-	pageCoreInstance.initExtension();
-
 	try {
-		/**
-		* Listening to all events thrown by fusionCharts on any
-		* fusionCharts component and
-		* logging them. This ensures we have lifecycle track of all components  
-		*/
-		FusionCharts.addEventListener('*', function registerEventLogs(e) {
-			pageCoreInstance.onFcEvent(e);
-		});
+		if (FusionCharts) {
+			const eventObj = addModule(Event),
+			configObj = addModule(Config);
+			// window.addEventListener(ATTACH_LISTENERS, function attachListeners () {
+			// 	eventObj.enableListeners(tabWindow);
+			// 	configObj.enableListeners(tabWindow);
+			// });
+			eventObj.enableListeners(tabWindow);
+			configObj.enableListeners(tabWindow);
+		}
 	} catch (err) {
 		// suppressing error for other pages which does not hold FusionChart var
 	}
-
-	/**
-	 * We get this event from background.js 
-	 * It tells the pageScript to scrape chart data fromsthe page on whcih this
-	 * is running
-	 */
-	tabWindow.addEventListener(GET_CHARTS, function getChartsInPage(event) {
-		pageCoreInstance.onGetChartsEvent(event);
-	}, false);
 })(window);
