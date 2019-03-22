@@ -97,32 +97,38 @@ export function addModule (moduleCopy) {
 function createTree(chart) {
   let tree = {},
     components = chart.getChildren();
-  if (components){
-    if (!isEmpty(components)) {
-      // let components = chart._components;
-      for (let component in components) {
-        if (components.hasOwnProperty(component)) {
-          let compVal = components[component],
-            subTree = {};
-          if (compVal.elemStore) {
-            compVal = compVal.elemStore;
-          }
-          if (compVal.length > 0) {
-            for (let index = 0; index < compVal.length; index++) {
-              const listenersOnComponent = getAllListenersOnComponent(compVal[index]),
-                compId = getComponentId(compVal[index]);
-              subTree[compId] = createTree(compVal[index]);
-              subTree[compId].id = compId;
-              subTree[compId].config = getConfig(compVal[index].config);
-              subTree[compId].evtListeners = listenersOnComponent.evtListeners;
-              subTree[compId].evtExtListeners = listenersOnComponent.evtExtListeners;
+  try {
+    if (components){
+      if (!isEmpty(components)) {
+        // let components = chart._components;
+        for (let component in components) {
+          if (components.hasOwnProperty(component)) {
+            let compVal = components[component],
+              subTree = {};
+            if (compVal.elemStore) {
+              compVal = compVal.elemStore;
             }
-            tree[component] = subTree;
+            if (compVal.length > 0) {
+              for (let index = 0; index < compVal.length; index++) {
+                const listenersOnComponent = getAllListenersOnComponent(compVal[index]),
+                  compId = getComponentId(compVal[index]);
+                subTree[compId] = createTree(compVal[index]);
+                subTree[compId].id = compId;
+                subTree[compId].config = getConfig(compVal[index].config);
+                subTree[compId].evtListeners = listenersOnComponent.evtListeners;
+                subTree[compId].evtExtListeners = listenersOnComponent.evtExtListeners;
+              }
+              tree[component] = subTree;
+            }
           }
         }
+      } else {
+        // return chart.getGraphicalElement();
       }
-    } else {
-      // return chart.getGraphicalElement();
+    }
+  } catch (err) {
+    if (err.name === 'RangeError') {
+      console.log('Not working because of cycling dependency in -> ', chart);
     }
   }
   return tree;

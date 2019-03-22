@@ -17,6 +17,5 @@ export default class Config {
 function getChartsInPage (e) {
   const charts = getComponentTree(FusionCharts.items),
   lifeCycleObj = JSON.parse(JSON.stringify(this.store.lifeCycleLog));
-  console.log(charts, lifeCycleObj);
   postWindowMessage(GOT_CHARTS, {charts, lifeCycleObj});
 }
