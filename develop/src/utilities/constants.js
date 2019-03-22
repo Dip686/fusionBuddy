@@ -8,3 +8,4 @@ export const GET_EVENTS = 'GET_EVENTS';
 export const ATTACH_LISTENERS = 'ATTACH_LISTENERS';
 export const GET_LIFE_CYCLE_LOG = 'GET_LIFE_CYCLE_LOG';
 export const GOT_LIFE_CYCLE_LOG = 'GOT_LIFE_CYCLE_LOG';
+export const SUMMON_FUSION_BUDDY = 'summon_fusion_buddy';

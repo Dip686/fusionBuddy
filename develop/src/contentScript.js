@@ -1,9 +1,10 @@
-import { HIGHLIGHT_COMPONENT, GET_CHARTS } from "./utilities/constants";
+import { HIGHLIGHT_COMPONENT, GET_CHARTS, SUMMON_FUSION_BUDDY } from "./utilities/constants";
 
 // start connection in content script
 let contentPort = chrome.runtime.connect({
 	name: 'content-script'
 });
+
 //Append your pageScript.js to "real" webpage. So will it can full access to webpate.
 var s = document.createElement('script');
 s.src = chrome.extension.getURL('pageScript.js');
@@ -17,7 +18,6 @@ s.src = chrome.extension.getURL('pageScript.js');
 contentPort.onMessage.addListener(handleMessageFromDevtools);
 //For any window events from page to this contentScript
 window.addEventListener('message', handleMessageFromPage, false);
-
 
 function handleMessageFromDevtools(message) {
 	if (message.type === GET_CHARTS) {
@@ -39,8 +39,13 @@ function handleMessageFromPage(event) {
 	} else if (event.data.action === 'GOT_EVENTS') {
 		contentPort.postMessage({ type: 'GOT_EVENTS', payload: event.data.payload });
 	} else if (event.data.action === 'GOT_LIFE_CYCLE_LOG') {
-		console.log(event);
 		contentPort.postMessage({ type: 'GOT_LIFE_CYCLE_LOG', payload: event.data.payload });
+	} else if (event.data.action === SUMMON_FUSION_BUDDY) {
+		if (event.data.payload.enable) {
+			chrome.runtime.sendMessage({ enableFB: true });
+		} else {
+			chrome.runtime.sendMessage({ enableFB: false });
+		}
 	}
 }
 
@@ -69,13 +74,13 @@ function onHighlighComponentById(componentId, chartId) {
 	window.dispatchEvent(event);
 	return true;
 }
-                              
-function onGetLifeCycleLog (id) {
-	  let event = new CustomEvent('GET_LIFE_CYCLE_LOG', {
-		  detail: {
-			  id
-		  }
-	  });
-	  window.dispatchEvent(event);
-	  return true;
- } 
+
+function onGetLifeCycleLog(id) {
+	let event = new CustomEvent('GET_LIFE_CYCLE_LOG', {
+		detail: {
+			id
+		}
+	});
+	window.dispatchEvent(event);
+	return true;
+}
