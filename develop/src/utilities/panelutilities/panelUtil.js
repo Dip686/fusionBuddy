@@ -1,4 +1,5 @@
 import { isEmpty } from '../utils';
+import { HIGHLIGHT_COMPONENT } from '../constants';
 /**
  * API to postMessage GET_UPDATED_DATA background.js
  * @param {Object} panelPort opne port used to commn between panel and background
@@ -90,7 +91,7 @@ export function orderEvents(dataToShow) {
  * EVENT API to pluck the eventListener and eventExtListeners
  * @param {Object} obj holds the entire data object to show
  */
-function pluckEventsInfo(obj) {
+export function pluckEventsInfo(obj) {
 	return obj
 		? {
 			evtListeners: obj.evtListeners,

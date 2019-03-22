@@ -1,5 +1,5 @@
 import JSONFormatter from 'json-formatter-js';
-import { GOT_CHARTS, GOT_EVENTS, GET_CHARTS, GOT_LIFE_CYCLE_LOG, HIGHLIGHT_COMPONENT } from '../utilities/constants';
+import { GOT_CHARTS, GOT_EVENTS, GET_CHARTS, GOT_LIFE_CYCLE_LOG } from '../utilities/constants';
 import  { fetchFreshDataForComponent, fireHighlightEvent,buildTree, setSelectedComponentId, orderEvents, pluckEventsInfo} from '../utilities/panelutilities/panelUtil';
 import { isEmpty } from '../utilities/utils';
 //panelPort stores connection of the chrome-extention's panel to the chrome runtime
