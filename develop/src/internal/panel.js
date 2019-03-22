@@ -1,5 +1,5 @@
 import JSONFormatter from 'json-formatter-js';
-import { GOT_CHARTS, GOT_EVENTS, GET_CHARTS } from '../utilities/constants';
+import { GOT_CHARTS, GOT_EVENTS, GET_CHARTS, GOT_LIFE_CYCLE_LOG, HIGHLIGHT_COMPONENT } from '../utilities/constants';
 
 //panelPort stores connection of the chrome-extention's panel to the chrome runtime
 //environment. This is a stay-alive connection.
@@ -34,7 +34,6 @@ panelPort.onMessage.addListener(function (msg, sender) {
 			componentViewID = document.getElementById('component-view-parent');
 		console.log('msg received', msg);
 		setPanelComponentsData(components);
-		setPanelComponentsLifecylceData(msg.payload.lifeCycleObj);
 		compInnerHTML = buildTree(components);
 
 		if (componentViewID.childNodes.item('jstree_demo_div')) {
@@ -52,15 +51,30 @@ panelPort.onMessage.addListener(function (msg, sender) {
 
 		//Setting eventListeners to the nodes of js tree
 		$("#jstree_demo_div").on("changed.jstree", function (evt, data) {
-			var selectedComponentId = $('#' + data.selected[0]).data('component-id');
-			setSelectedComponentId(selectedComponentId);
+			var componentId = $('#' + data.selected[0]).data('component-id');
+			setSelectedComponentId(componentId);
 			setSelectedTab('#params-tab');
+			panelPort && panelPort.postMessage({ type: 'GET_LIFE_CYCLE_LOG', payload: { componentId } });
 			// fetchFreshDataForComponent(panelContext.currentSelectedComponentId);
+			fireHighlightEvent(componentId);
 		});
+
+		$('#jstree_demo_div').on("hover_node.jstree", function (e, data) {
+			fireHighlightEvent($('#' + data.node.id).data('component-id'));
+		});
+
+		// $('#jstree_demo_div').on("certainEvent", function onCertainEvent(e,data) {
+		// 	var hoveredNode = "someNode";
+		// 	//Lets tell background about this
+
+		// });
+
 		$('.switch-tab-button').off();
 		$('.switch-tab-button').on('click', function () {
 			setSelectedTab($(this).attr('href'));
 		});
+	} else if (msg.type === GOT_LIFE_CYCLE_LOG) {
+		panelContext.currentSelectedComponentLifecycle[panelContext.currentSelectedComponentId] = msg.payload;
 	}
 });
 
@@ -72,6 +86,10 @@ init();
 
 function fetchFreshDataForComponent(componentId) {
 	panelPort && panelPort.postMessage({ type: 'GET_UPDATED_DATA', payload: { componentId } });
+}
+
+function fireHighlightEvent(componentId) {
+	panelPort && panelPort.postMessage({ type: HIGHLIGHT_COMPONENT, payload: { componentId } });
 }
 
 function buildTree(components) {
@@ -176,7 +194,7 @@ function timeTravelLog(e) {
 	var newLiComp = document.createElement('li');
 	newLiComp.innerHTML = 
 	`
-		Component: ${e.referenceId}
+		Component: ${e.componentId}
 	`;
 	newLiComp.classList.add('component-id-li');
 

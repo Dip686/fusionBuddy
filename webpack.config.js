@@ -7,9 +7,10 @@ var options = {
   entry: {
     devtools: `${__dirname}/develop/src/internal/devtools.js`,
     panel: `${__dirname}/develop/src/internal/panel.js`,
-    pageScript: `${__dirname}/develop/src/pageScript.js`
+    pageScript: `${__dirname}/develop/src/pageScript.js`,
+    contentScript: `${__dirname}/develop/src/contentScript.js`
   },
-  devtool: 'source-map',
+  devtool: 'inline-source-map',
   output: {
     path: path.join(__dirname, "build", "chrome-ext"),
     filename: "[name].js"
@@ -43,7 +44,7 @@ var options = {
       { from: path.join(__dirname, "develop", "src", "vendors"), to: path.join(__dirname, "build", "chrome-ext", "vendors") },
       { from: path.join(__dirname, "develop", "src", "manifest.json"), to: path.join(__dirname, "build", "chrome-ext") },
       { from: path.join(__dirname, "develop", "src", "background.js"), to: path.join(__dirname, "build", "chrome-ext") },
-      { from: path.join(__dirname, "develop", "src", "contentScript.js"), to: path.join(__dirname, "build", "chrome-ext") },
+      // { from: path.join(__dirname, "develop", "src", "contentScript.js"), to: path.join(__dirname, "build", "chrome-ext") },
     ])
   ]
 };

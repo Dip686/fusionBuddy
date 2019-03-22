@@ -1,3 +1,5 @@
+import { HIGHLIGHT_COMPONENT, GET_CHARTS } from "./utilities/constants";
+
 // start connection in content script
 let contentPort = chrome.runtime.connect({
 	name: 'content-script'
@@ -18,12 +20,16 @@ window.addEventListener('message', handleMessageFromPage, false);
 
 
 function handleMessageFromDevtools(message) {
-	if (message.type === 'GET_CHARTS') {
+	if (message.type === GET_CHARTS) {
 		onGetCharts(message);
 	} else if (message.type === "GET_UPDATED_DATA") {
 		onGetChartsByComponentId(message.payload.componentId);
+	} else if (message.type === 'GET_LIFE_CYCLE_LOG') {
+		onGetLifeCycleLog(message.payload.componentId);
 	} else if (message.type.includes('GET_CHARTS')) {
 		onGetChartsByComponentId(message.type.replace('GET_CHARTS_', ''));
+	} else if (message.type === HIGHLIGHT_COMPONENT) {
+		onHighlighComponentById(message.payload.componentId);
 	}
 }
 
@@ -32,6 +38,9 @@ function handleMessageFromPage(event) {
 		contentPort.postMessage({ type: 'GOT_CHARTS', payload: event.data.payload });
 	} else if (event.data.action === 'GOT_EVENTS') {
 		contentPort.postMessage({ type: 'GOT_EVENTS', payload: event.data.payload });
+	} else if (event.data.action === 'GOT_LIFE_CYCLE_LOG') {
+		console.log(event);
+		contentPort.postMessage({ type: 'GOT_LIFE_CYCLE_LOG', payload: event.data.payload });
 	}
 }
 
@@ -50,3 +59,23 @@ function onGetChartsByComponentId(id) {
 	window.dispatchEvent(event);
 	return true;
 }
+
+function onHighlighComponentById(componentId, chartId) {
+	let event = new CustomEvent(HIGHLIGHT_COMPONENT, {
+		detail: {
+			componentId
+		}
+	});
+	window.dispatchEvent(event);
+	return true;
+}
+                              
+function onGetLifeCycleLog (id) {
+	  let event = new CustomEvent('GET_LIFE_CYCLE_LOG', {
+		  detail: {
+			  id
+		  }
+	  });
+	  window.dispatchEvent(event);
+	  return true;
+ } 
