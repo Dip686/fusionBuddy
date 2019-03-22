@@ -79,7 +79,9 @@ body {
 
 #component-view-parent {
   font-size: 12px;
-  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+#jstree_demo_div {
+  overflow: scroll;
 }
