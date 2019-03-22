@@ -144,7 +144,7 @@ function timeTravelLog(e) {
 	var newLiEvt = document.createElement('li');
 	newLiEvt.innerHTML = 
 	`
-		Event: ${e.eventId}
+		Event: ${e.eventId} ${e.hourMinuteSec}
 	`;
 	var newLiComp = document.createElement('li');
 	newLiComp.innerHTML = 
