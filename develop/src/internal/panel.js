@@ -41,6 +41,7 @@ panelPort.onMessage.addListener(function (msg, sender) {
 		}
 		let tempDiv = document.createElement('div');
 		tempDiv.id = "jstree_demo_div";
+		tempDiv.classList.add('f-b-padding-sides-20');
 		componentViewID.appendChild(tempDiv);
 
 		compInnerHTML = `<ul><li data-component-id="${components.id}">chart ${compInnerHTML} </li></ul>`;
@@ -70,7 +71,7 @@ panelPort.onMessage.addListener(function (msg, sender) {
 
 		$('.switch-tab-button').off();
 		$('.switch-tab-button').on('click', function () {
-			setSelectedTab($(this).data('tab-id'));
+			setSelectedTab($(this).attr('href'));
 		});
 	} else if (msg.type === GOT_LIFE_CYCLE_LOG) {
 		panelContext.currentSelectedComponentLifecycle[panelContext.currentSelectedComponentId] = msg.payload;
@@ -129,8 +130,6 @@ function setSelectedTab(tabId) {
 
 function selectTabInternal() {
 	var dataSection = $('#data-section');
-	dataSection.find('.panel-tab').hide();
-	dataSection.find(panelContext.currentSelectedTab).show();
 
 	let dataToShow = {};
 	switch (panelContext.currentSelectedTab) {
@@ -147,8 +146,7 @@ function selectTabInternal() {
 	}
 
 	const jsonFormatter = new JSONFormatter(dataToShow);
-	dataSection.find(panelContext.currentSelectedTab)
-		.find('.tab-content').html(jsonFormatter.render());
+	dataSection.find(panelContext.currentSelectedTab).html(jsonFormatter.render());
 }
 function init() {
 	setSelectedTab('#params-tab');

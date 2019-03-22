@@ -6,45 +6,50 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>FC Dev tools</title>
 	<script src="../../vendors/jquery/jquery.min.js"></script>
+	<script src="../../vendors/bootstrap/bootstrap.js"></script>
 	<link rel="stylesheet" href="../../vendors/jstree/assets/themes/default/style.min.css" />
 	<script src="../../vendors/jstree/assets/jstree.min.js"></script>
+	<link rel="stylesheet" href="../../vendors/fcstyles/fcstyle.css" />
 	<link rel="stylesheet" href="./panel.css" />
 </head>
 
 <body>
-	<div class="component-container">
-		<div class="layout-row justify-space-between full-height">
-			<div id="component-view-parent" class="col-50">
-				<div class="toolbar">
-					<span class="toolbar-title">Fusion Buddy</span>
-					<span id="refresh-btn">Refresh</i></span>
-				</div>
-				<div id="jstree_demo_div"></div>
+	<div class="">
+		<div class="row">
+			<div id="component-view-parent" class="col-sm-6 f-b-padding-0">
+				<nav class="navbar navbar-expand-lg navbar-light bg-light f-b-toolbar f-b-padding-sides-20" style="border-right: none;">
+					<span>FusionBuddy</span>
+					<span id="refresh-btn" class="badge badge-warning ml-auto" style="cursor: pointer; padding: 5px;">Refresh</i></span>
+				</nav>
+				<div id="jstree_demo_div" class="f-b-padding-sides-20"></div>
 			</div>
-			<div class="layout-column col-50 justify-space-between" id="data-section">
-				<div class="header col-100 layout-row text-center justify-space-around">
-					<div class="switch-tab-button" data-tab-id="#params-tab">
-						Configurations
+			<div class="col-sm-6 f-b-padding-0" id="data-section" style="border-left: 1px solid #e0dacf;">
+				<div class="col-sm-12 f-b-padding-0" style="min-height: 70vh;">
+					<ul class="nav nav-pills f-b-pills bg-light nav-fill" id="myTab" role="tablist">
+						<li class="nav-item">
+							<a class="nav-link active switch-tab-button" id="params" data-toggle="tab" href="#params-tab" role="tab" aria-controls="home"
+								aria-selected="true">Configurations</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link switch-tab-button" id="events" data-toggle="tab" href="#events-tab" role="tab" aria-controls="profile"
+								aria-selected="false">Events listeners</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link switch-tab-button" id="life-cycle" data-toggle="tab" href="#life-cycle-tab" role="tab" aria-controls="contact"
+								aria-selected="false">life-cycle</a>
+						</li>
+					</ul>
+					<div class="tab-content f-b-padding-sides-20" id="myTabContent">
+						<div class="tab-pane fade show active" id="params-tab" role="tabpanel" aria-labelledby="params-tab"></div>
+						<div class="tab-pane fade" id="events-tab" role="tabpanel" aria-labelledby="profile-tab"></div>
+						<div class="tab-pane fade" id="life-cycle-tab" role="tabpanel" aria-labelledby="contact-tab"></div>
 					</div>
-					<div class="switch-tab-button" data-tab-id="#events-tab">Event Listeners</div>
-					<div class="switch-tab-button" data-tab-id="#life-cycle-tab">Lifecycle Log</div>
 				</div>
-				<div class="layout-row col-100 height-100">
-					<div class="panel-tab col-100" id="params-tab">
-						<div class="tab-content"></div>
-					</div>
-					<div class="panel-tab col-100" id="events-tab" style="display:none;">
-						<div class="tab-content"></div>
-					</div>
-					<div class="panel-tab col-100" id="life-cycle-tab">
-						<div class="tab-content"></div>
-					</div>
-				</div>
-				<div class="timetravel-footer col-100">
-					<div class="time-travel-header text-center">
+				<div class="col-sm-12 f-b-padding-0">
+					<nav class="navbar navbar-expand-lg navbar-light bg-light f-b-toolbar" style="border-left: none;">
 						Time Travel
-					</div>
-					<div class="state-list-holder">
+					</nav>
+					<div class="f-b-timetravel-box f-b-padding-10">
 						<ul id="state-list"></ul>
 					</div>
 				</div>
