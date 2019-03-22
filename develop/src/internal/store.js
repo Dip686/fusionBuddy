@@ -9,6 +9,8 @@ export default class {
     let componentId = getComponentId(e.sender),
       eventIndex,
       evtDetail,
+      hourMinuteSec,
+      now = new Date(),
       componentNextState = {},
       meta = this.lifeCycleLog[componentId];
     if (!meta) {
@@ -16,6 +18,7 @@ export default class {
       this.lifeCycleLog[componentId] = meta;
     }
     meta[e.type] = meta[e.type] ? meta[e.type] + 1 : 1;
+    hourMinuteSec = 'hh:mm:ss:ms: '+now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds() + ':' + now.getMilliseconds();
     /**
      * eventStream is like a list of events that has happened on this component
      * throughout it's lifecycle
@@ -23,7 +26,7 @@ export default class {
    eventIndex = meta.eventStream.push({
       type: e.type,
       timestamp: Date.now(),
-      now: new Date(),
+      now,
       componentId,
       state: componentNextState
     });
@@ -31,7 +34,8 @@ export default class {
       eventId: e.type,
       eventIndex,
       componentId,
-      componentNextState
+      componentNextState,
+      hourMinuteSec
     }
     return evtDetail;
   }
