@@ -54,7 +54,7 @@ export function highlightHTMLElement({top,height,left,width}) {
   highlighter.style.left = left + "px";
   highlighter.style.width = width + "px";
   highlighter.style.height = height + "px";
-  highlighter.style.backgroundColor = 'rgba(26, 64, 202, 0.38)';
+  highlighter.style.backgroundColor = 'rgba(125, 148, 226, 0.38)';
 
   document.body.appendChild(highlighter);
 }

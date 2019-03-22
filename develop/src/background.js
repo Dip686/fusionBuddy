@@ -61,3 +61,18 @@ function postMessageToPanel(message) {
     panelPort.postMessage(message);
   }
 }
+
+chrome.runtime.onMessage.addListener((req, sender) => {
+  setIcon(req.enableFB, sender.tab.id);
+});
+
+function setIcon(enableFB, tabId) {
+  chrome.browserAction.setIcon({
+    tabId: tabId,
+    path: {
+      '16': enableFB ? '/icons/icon16.png' : '/icons/icon16-disabled.png',
+      '48': enableFB ? '/icons/icon48.png' : '/icons/icon48-disabled.png',
+      '128': enableFB ? '/icons/icon128.png' : '/icons/icon128-disabled.png',
+    },
+  });
+}

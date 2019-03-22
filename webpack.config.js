@@ -40,6 +40,7 @@ var options = {
   },
   plugins: [
     new CopyWebpackPlugin([
+      { from: path.join(__dirname, "develop", "src", "icons"), to: path.join(__dirname, "build", "chrome-ext", "icons") },
       { from: path.join(__dirname, "develop", "src", "viz"), to: path.join(__dirname, "build", "chrome-ext", "viz") },
       { from: path.join(__dirname, "develop", "src", "vendors"), to: path.join(__dirname, "build", "chrome-ext", "vendors") },
       { from: path.join(__dirname, "develop", "src", "manifest.json"), to: path.join(__dirname, "build", "chrome-ext") },

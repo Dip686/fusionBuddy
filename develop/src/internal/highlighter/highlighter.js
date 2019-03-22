@@ -5,7 +5,7 @@ export default class Highlighter {
   constructor() {
   }
   enableListeners(platform) {
-    platform.addEventListener(HIGHLIGHT_COMPONENT, onHighlightComponentById.bind(this));
+    platform.addEventListener(HIGHLIGHT_COMPONENT, onHighlightComponentById);
     document.addEventListener('mouseenter', removeExistingHighlights);
   }
   disableListeners(platform) {
@@ -22,11 +22,22 @@ function onHighlightComponentById(e) {
     const graphicalElements = component.getGraphicalElement();
     for (let prop in graphicalElements) {
       if (graphicalElements.hasOwnProperty(prop)) {
-        const element = graphicalElements[prop];
-        if (element && element[0] && element[0].getClientRects) {
-          highlightHTMLElement(element[0].getClientRects()[0]);
+        const element = getDOMElementFromGraphicalElement(graphicalElements[prop]);
+        if (element) {
+          highlightHTMLElement(element.getClientRects()[0]);
         }
       }
     }
   }
+}
+
+function getDOMElementFromGraphicalElement(element) {
+  if (element) {
+    if (element[0] && element[0].getClientRects) {
+      return element[0];
+    } else if (element.elemStore && element.elemStore[0][0] && element.elemStore[0][0].getClientRects) {
+      return element.elemStore[0][0];
+    }
+  }
+  return null;
 }
