@@ -53,9 +53,8 @@ panelPort.onMessage.addListener(function (msg, sender) {
 		$("#jstree_demo_div").on("changed.jstree", function (evt, data) {
 			var componentId = $('#' + data.selected[0]).data('component-id');
 			setSelectedComponentId(componentId);
-			setSelectedTab('#params-tab');
+			setSelectedTab( panelContext.currentSelectedTab || '#params-tab');
 			panelPort && panelPort.postMessage({ type: 'GET_LIFE_CYCLE_LOG', payload: { componentId } });
-			// fetchFreshDataForComponent(panelContext.currentSelectedComponentId);
 			fireHighlightEvent(componentId);
 		});
 

@@ -96,7 +96,7 @@ export function addModule (moduleCopy) {
  */
 function createTree(chart) {
   let tree = {},
-    components = chart.getChildren();
+    components = getChildComponents(chart);
   try {
     if (components){
       if (!isEmpty(components)) {
@@ -214,4 +214,12 @@ function getAllListenersOnComponent(component) {
     evtListeners,
     evtExtListeners
   };
+}
+/**
+ * This API returns all compoent that passed container has
+ * @param {Object} container container is a chart or chart component
+ * @returns {Object} returns the child components
+ */
+function getChildComponents (container) {
+  return  container.getChildren();
 }

@@ -84,4 +84,12 @@ body {
 }
 #jstree_demo_div {
   overflow: scroll;
+  padding-bottom: 20px;
+}
+.tab-content {
+  overflow: scroll;
+  padding-bottom: 20px;
+}
+.component-id-li {
+  font-weight: bold;
 }
