@@ -1,6 +1,7 @@
 import JSONFormatter from 'json-formatter-js';
 import { GOT_CHARTS, GOT_EVENTS, GET_CHARTS, GOT_LIFE_CYCLE_LOG, HIGHLIGHT_COMPONENT } from '../utilities/constants';
-
+import  { fetchFreshDataForComponent, fireHighlightEvent,buildTree, setSelectedComponentId, orderEvents, pluckEventsInfo} from '../utilities/panelutilities/panelUtil';
+import { isEmpty } from '../utilities/utils';
 //panelPort stores connection of the chrome-extention's panel to the chrome runtime
 //environment. This is a stay-alive connection.
 let panelPort = chrome.runtime.connect({
@@ -18,7 +19,7 @@ const panelContext = {
 	$stateListUl: null
 };
 //The first postMessage to background, background will relay it across horizon to
-//our page.
+//our pagescript.
 panelPort && panelPort.postMessage({ type: GET_CHARTS, payload: {} });
 //This listener handles messages to this panel from our page through the background.js 
 //play as mediator
@@ -52,14 +53,14 @@ panelPort.onMessage.addListener(function (msg, sender) {
 		//Setting eventListeners to the nodes of js tree
 		$("#jstree_demo_div").on("changed.jstree", function (evt, data) {
 			var componentId = $('#' + data.selected[0]).data('component-id');
-			setSelectedComponentId(componentId);
+			setSelectedComponentId(panelContext, componentId);
 			setSelectedTab( panelContext.currentSelectedTab || '#params-tab');
 			panelPort && panelPort.postMessage({ type: 'GET_LIFE_CYCLE_LOG', payload: { componentId } });
-			fireHighlightEvent(componentId);
+			fireHighlightEvent(panelPort, componentId);
 		});
 
 		$('#jstree_demo_div').on("hover_node.jstree", function (e, data) {
-			fireHighlightEvent($('#' + data.node.id).data('component-id'));
+			fireHighlightEvent(panelPort, $('#' + data.node.id).data('component-id'));
 		});
 
 		// $('#jstree_demo_div').on("certainEvent", function onCertainEvent(e,data) {
@@ -78,49 +79,10 @@ panelPort.onMessage.addListener(function (msg, sender) {
 });
 
 document.getElementById('refresh-btn').addEventListener('click', function refreshData() {
-	fetchFreshDataForComponent(panelContext.currentSelectedComponentId);
+	fetchFreshDataForComponent(panelPort, panelContext.currentSelectedComponentId);
 });
 
 init();
-
-function fetchFreshDataForComponent(componentId) {
-	panelPort && panelPort.postMessage({ type: 'GET_UPDATED_DATA', payload: { componentId } });
-}
-
-function fireHighlightEvent(componentId) {
-	panelPort && panelPort.postMessage({ type: HIGHLIGHT_COMPONENT, payload: { componentId } });
-}
-
-function buildTree(components) {
-	let str = '<ul>';
-	for (let component in components) {
-		if (component !== 'config' && component !== 'id' && component !== 'evtListeners' && component !== 'evtExtListeners' && components.hasOwnProperty(component)) {
-			let compVal = components[component];
-			compVal.id ? str += (`<li data-component-id="${compVal.id}">` + component) : str += (`<li data-component-id="${component}">` + component);
-			if (!isEmpty(compVal)) {
-				str += buildTree(compVal);
-			}
-			str += '</li>';
-		}
-	}
-	str += '</ul>';
-	return str;
-}
-function isEmpty(obj) {
-	for (var prop in obj) {
-		if (obj.hasOwnProperty(prop))
-			return false;
-	}
-	return true;
-}
-function setSelectedComponentId(componentId) {
-	panelContext.currentSelectedComponentId = componentId;
-	if (panelContext._components.id === panelContext.currentSelectedComponentId) {
-		panelContext.currentSelectedComponent = panelContext._components || {};
-	} else {
-		panelContext.currentSelectedComponent = getComponentById(panelContext._components, panelContext.currentSelectedComponentId) || {}
-	}
-}
 
 function setSelectedTab(tabId) {
 	panelContext.currentSelectedTab = tabId;
@@ -150,13 +112,7 @@ function selectTabInternal() {
 function init() {
 	setSelectedTab('#params-tab');
 }
-function orderEvents(dataToShow) {
-	if (dataToShow.eventStream) {
-		const reducer = (accumulator, currentValue) => accumulator + ', ' + currentValue.type;
-		return dataToShow.eventStream.reduce(reducer, '').replace(', ', '');
-	}
-	return '';
-}
+
 function setPanelComponentsData(components) {
 	panelContext._components = components;
 	//TODO: Probably update views of all tabs
@@ -204,33 +160,4 @@ function timeTravelLog(e) {
 		top:stateListUL.scrollHeight,
 		behavior: 'smooth'
 	});      
-}
-function getComponentById(components, id) {
-	for (let prop in components) {
-		if (components.hasOwnProperty(prop)) {
-			const component = components[prop];
-
-			if (prop === id  && component.id === id) {
-				//Found it
-				return component;
-			} else {
-				if (component && !isEmpty(component) && component instanceof Object) {
-					//It's a component and thus searching for children
-					const result = getComponentById(component, id);
-					if (result) {
-						return result;
-					}
-				}
-			}
-		}
-	}
-	return null;
-}
-function pluckEventsInfo(obj) {
-	return obj
-		? {
-			evtListeners: obj.evtListeners,
-			evtExtListeners: obj.evtExtListeners
-		}
-		: {};
 }

@@ -8,6 +8,10 @@ export function getComponentId(component) {
   return component.getId ? component.getId() : component.id;
 }
 
+/**
+ * Utility API to check an object is empty or not
+ * @param {Object} obj any valid javascript object
+ */
 export function isEmpty(obj) {
   for (var prop in obj) {
     if (obj.hasOwnProperty(prop))
