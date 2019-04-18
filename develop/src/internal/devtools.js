@@ -1,4 +1,4 @@
-chrome.devtools.panels.create("FCDevtool",
+chrome.devtools.panels.create("FusionCharts",
     "MyPanelIcon.png",
     "../viz/pane/panel.html",
     function(panel) {

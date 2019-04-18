@@ -1,6 +1,9 @@
 {
-  "name": "FC Devtools",
-  "version": "1.0",
+  "name": "FusionCharts Developer Tools",
+  "version": "0.0.1",
+  "version_name": "0.0.1 beta",
+  "short_name": "FusionCharts",
+  "description": "A developer tool built for FusionCharts internal engineers",
   "manifest_version":2,
   "minimum_chrome_version": "10.0",
   "devtools_page": "./viz/devtools.html",
