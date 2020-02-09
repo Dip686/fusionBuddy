@@ -4,7 +4,8 @@
   "private": true,
   "description": "Chrome devtool extension for getting better insight while debugging a FusionChart",
   "scripts": {
-    "build": "webpack"
+    "build": "webpack",
+    "watch": "webpack --watch"
   },
   "repository": {
     "type": "git",
@@ -43,13 +44,14 @@
     "url": "https://github.com/Dip686/fusionBuddy/issues"
   },
   "homepage": "https://github.com/Dip686/fusionBuddy#readme",
-  "dependencies": {
+  "devDependencies": {
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.3.4",
     "@babel/preset-env": "^7.3.4",
     "@babel/preset-es2015": "^7.0.0-beta.53",
     "babel-loader": "^8.0.5",
     "copy-webpack-plugin": "^5.0.1",
+    "eslint": "^5.16.0",
     "json-formatter-js": "^2.2.1",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.2.3"

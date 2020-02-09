@@ -1,10 +1,11 @@
 import JSONFormatter from 'json-formatter-js';
-import { GOT_CHARTS, GOT_EVENTS, GET_CHARTS } from '../utilities/constants';
-
+import { GOT_CHARTS, GOT_EVENTS, GET_CHARTS, GOT_LIFE_CYCLE_LOG } from '../utilities/constants';
+import  { fetchFreshDataForComponent, fireHighlightEvent,buildTree, setSelectedComponentId, orderEvents, pluckEventsInfo} from '../utilities/panelutilities/panelUtil';
+import { isEmpty } from '../utilities/utils';
 //panelPort stores connection of the chrome-extention's panel to the chrome runtime
 //environment. This is a stay-alive connection.
 let panelPort = chrome.runtime.connect({
-	name: 'panel-commn'
+	name: '' + chrome.devtools.inspectedWindow.tabId
 });
 //panelContext saves the current state of the panel,
 //For example, which tab is selected, which component is selected, etc
@@ -18,21 +19,22 @@ const panelContext = {
 	$stateListUl: null
 };
 //The first postMessage to background, background will relay it across horizon to
-//our page.
+//our pagescript.
 panelPort && panelPort.postMessage({ type: GET_CHARTS, payload: {} });
 //This listener handles messages to this panel from our page through the background.js 
 //play as mediator
-panelPort.onMessage.addListener(function (msg) {
+panelPort.onMessage.addListener(function (msg, sender) {
+	console.log(sender && sender.tab && sender.tab.id);
 	if (msg.type === GOT_EVENTS) {
+		console.log("GOT_EVENT");
 		setPanelComponentsStateOnEvents(msg.payload);
 	} else if (msg.type === GOT_CHARTS) {
-		let components = msg.payload.tree,
+		let components = msg.payload.charts,
 			compInnerHTML,
 			jsTreeObj,
 			componentViewID = document.getElementById('component-view-parent');
 		console.log('msg received', msg);
 		setPanelComponentsData(components);
-		setPanelComponentsLifecylceData(msg.payload.lifeCycleObj);
 		compInnerHTML = buildTree(components);
 
 		if (componentViewID.childNodes.item('jstree_demo_div')) {
@@ -40,6 +42,7 @@ panelPort.onMessage.addListener(function (msg) {
 		}
 		let tempDiv = document.createElement('div');
 		tempDiv.id = "jstree_demo_div";
+		tempDiv.classList.add('f-b-padding-sides-20');
 		componentViewID.appendChild(tempDiv);
 
 		compInnerHTML = `<ul><li data-component-id="${components.id}">chart ${compInnerHTML} </li></ul>`;
@@ -49,59 +52,37 @@ panelPort.onMessage.addListener(function (msg) {
 
 		//Setting eventListeners to the nodes of js tree
 		$("#jstree_demo_div").on("changed.jstree", function (evt, data) {
-			var selectedComponentId = $('#' + data.selected[0]).data('component-id');
-			setSelectedComponentId(selectedComponentId);
-			setSelectedTab('#params-tab');
-			// fetchFreshDataForComponent(panelContext.currentSelectedComponentId);
-
+			var componentId = $('#' + data.selected[0]).data('component-id');
+			setSelectedComponentId(panelContext, componentId);
+			setSelectedTab( panelContext.currentSelectedTab || '#params-tab');
+			panelPort && panelPort.postMessage({ type: 'GET_LIFE_CYCLE_LOG', payload: { componentId } });
+			fireHighlightEvent(panelPort, componentId);
 		});
+
+		$('#jstree_demo_div').on("hover_node.jstree", function (e, data) {
+			fireHighlightEvent(panelPort, $('#' + data.node.id).data('component-id'));
+		});
+
+		// $('#jstree_demo_div').on("certainEvent", function onCertainEvent(e,data) {
+		// 	var hoveredNode = "someNode";
+		// 	//Lets tell background about this
+
+		// });
+
 		$('.switch-tab-button').off();
 		$('.switch-tab-button').on('click', function () {
-			setSelectedTab($(this).data('tab-id'));
+			setSelectedTab($(this).attr('href'));
 		});
+	} else if (msg.type === GOT_LIFE_CYCLE_LOG) {
+		panelContext.currentSelectedComponentLifecycle[panelContext.currentSelectedComponentId] = msg.payload;
 	}
 });
 
 document.getElementById('refresh-btn').addEventListener('click', function refreshData() {
-	fetchFreshDataForComponent(panelContext.currentSelectedComponentId);
+	fetchFreshDataForComponent(panelPort, panelContext.currentSelectedComponentId);
 });
 
 init();
-
-function fetchFreshDataForComponent(componentId) {
-	panelPort && panelPort.postMessage({ type: 'GET_UPDATED_DATA', payload: { componentId } });
-}
-
-function buildTree(components) {
-	let str = '<ul>';
-	for (let component in components) {
-		if (component !== 'config' && component !== 'id' && component !== 'evtListeners' && component !== 'evtExtListeners' && components.hasOwnProperty(component)) {
-			let compVal = components[component];
-			compVal.id ? str += (`<li data-component-id="${compVal.id}">` + component) : str += (`<li data-component-id="${component}">` + component);
-			if (!isEmpty(compVal)) {
-				str += buildTree(compVal);
-			}
-			str += '</li>';
-		}
-	}
-	str += '</ul>';
-	return str;
-}
-function isEmpty(obj) {
-	for (var prop in obj) {
-		if (obj.hasOwnProperty(prop))
-			return false;
-	}
-	return true;
-}
-function setSelectedComponentId(componentId) {
-	panelContext.currentSelectedComponentId = componentId;
-	if (panelContext._components.id === panelContext.currentSelectedComponentId) {
-		panelContext.currentSelectedComponent = panelContext._components || {};
-	} else {
-		panelContext.currentSelectedComponent = getComponentById(panelContext._components, panelContext.currentSelectedComponentId) || {}
-	}
-}
 
 function setSelectedTab(tabId) {
 	panelContext.currentSelectedTab = tabId;
@@ -110,13 +91,11 @@ function setSelectedTab(tabId) {
 
 function selectTabInternal() {
 	var dataSection = $('#data-section');
-	dataSection.find('.panel-tab').hide();
-	dataSection.find(panelContext.currentSelectedTab).show();
 
 	let dataToShow = {};
 	switch (panelContext.currentSelectedTab) {
 		case "#params-tab":
-			dataToShow = panelContext.currentSelectedComponent;
+			dataToShow = panelContext.currentSelectedComponent.config || {};
 			break;
 		case "#events-tab":
 			dataToShow = panelContext.currentSelectedComponent ? pluckEventsInfo(panelContext.currentSelectedComponent) : {};
@@ -128,19 +107,12 @@ function selectTabInternal() {
 	}
 
 	const jsonFormatter = new JSONFormatter(dataToShow);
-	dataSection.find(panelContext.currentSelectedTab)
-		.find('.tab-content').html(jsonFormatter.render());
+	dataSection.find(panelContext.currentSelectedTab).html(jsonFormatter.render());
 }
 function init() {
 	setSelectedTab('#params-tab');
 }
-function orderEvents(dataToShow) {
-	if (dataToShow.eventStream) {
-		const reducer = (accumulator, currentValue) => accumulator + ', ' + currentValue.type;
-		return dataToShow.eventStream.reduce(reducer, '').replace(', ', '');
-	}
-	return '';
-}
+
 function setPanelComponentsData(components) {
 	panelContext._components = components;
 	//TODO: Probably update views of all tabs
@@ -172,48 +144,38 @@ function timeTravelLog(e) {
 	var newLiEvt = document.createElement('li');
 	newLiEvt.innerHTML = 
 	`
-		Event: ${e.eventId}
+		Event: ${e.eventId} ${e.hourMinuteSec}
 	`;
 	var newLiComp = document.createElement('li');
 	newLiComp.innerHTML = 
 	`
-		Component: ${e.referenceId}
+		Component: ${e.componentId}
 	`;
 	newLiComp.classList.add('component-id-li');
-
-	stateListUL.appendChild(newLiEvt);
-	stateListUL.appendChild(newLiComp);
+	var containerEle = document.createElement('ul');
+	containerEle.setAttribute('class', 'component-event-container');
+	containerEle.appendChild(newLiEvt);
+	containerEle.appendChild(newLiComp);
+	stateListUL.appendChild(containerEle);
 	//Always scroll to bottom of the list continuously on update
 	stateListUL.parentElement.scrollTo({
 		top:stateListUL.scrollHeight,
 		behavior: 'smooth'
 	});      
 }
-function getComponentById(components, id) {
-	for (let prop in components) {
-		if (components.hasOwnProperty(prop)) {
-			const component = components[prop];
-			if (prop === id) {
-				//Found it
-				return component;
-			} else {
-				if (component && !isEmpty(component) && component instanceof Object) {
-					//It's a component and thus searching for children
-					const result = getComponentById(component, id);
-					if (result) {
-						return result;
-					}
-				}
-			}
+document.getElementById('search-btn').addEventListener('click', function searchItems(){
+	let serachText = document.getElementById('search-box').value,
+		searchContainer = document.getElementsByClassName('component-event-container');
+	for (let index = 0; index < searchContainer.length; index++) {
+		const element = searchContainer[index];
+		if (!element.innerText.includes(serachText)) {
+			element.style.display='none';
+		} else {
+			element.style.display='block';
 		}
 	}
-	return null;
-}
-function pluckEventsInfo(obj) {
-	return obj
-		? {
-			evtListeners: obj.evtListeners,
-			evtExtListeners: obj.evtExtListeners
-		}
-		: {};
-}
+});
+
+document.getElementById('clear-btn').addEventListener('click', function removeAllChildren () {
+	document.getElementById('state-list').innerHTML = '';
+});

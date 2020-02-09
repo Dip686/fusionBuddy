@@ -1,3 +1,5 @@
+import { FC_BUDDY_HIGHLIGHTER_CLASS } from "./constants";
+
 export function postWindowMessage(action, payload) {
   window.postMessage({ action, payload }, '*');
 }
@@ -6,6 +8,10 @@ export function getComponentId(component) {
   return component.getId ? component.getId() : component.id;
 }
 
+/**
+ * Utility API to check an object is empty or not
+ * @param {Object} obj any valid javascript object
+ */
 export function isEmpty(obj) {
   for (var prop in obj) {
     if (obj.hasOwnProperty(prop))
@@ -14,12 +20,61 @@ export function isEmpty(obj) {
   return true;
 }
 
+export function getComponentFromChart(componentId) {
+  // const chart = FusionCharts.getChartsFromId(chartId);
+  // if (chart === null || chart === undefined) {
+  //   return null;
+  // }
+
+  //Check if FusionCharts exists
+  if (typeof FusionCharts === 'undefined') {
+    return null;
+  }
+  let foundComponent = null;
+  const charts = FusionCharts.items;
+  for(let prop in charts) {
+    if(charts.hasOwnProperty(prop)) {
+      const chart = charts[prop];
+      chart.apiInstance.iterateComponents((component) => {
+        const id = component.getId ? component.getId() : component.id;
+        if(id === componentId) {
+          foundComponent = component;
+        }
+      });
+    }
+  }
+  return foundComponent;
+}
+
+export function highlightHTMLElement({top,height,left,width}) {
+  const highlighter = document.createElement("div");
+  highlighter.classList.add(FC_BUDDY_HIGHLIGHTER_CLASS);
+  highlighter.style.position = 'fixed';
+  highlighter.style.top = top + "px";
+  highlighter.style.left = left + "px";
+  highlighter.style.width = width + "px";
+  highlighter.style.height = height + "px";
+  highlighter.style.backgroundColor = 'rgba(125, 148, 226, 0.38)';
+
+  document.body.appendChild(highlighter);
+}
+
+export function removeExistingHighlights() {
+  // Get the element by their class name
+  const oldHighlights = document.getElementsByClassName(FC_BUDDY_HIGHLIGHTER_CLASS);
+  // Now remove them
+  while (oldHighlights.length > 0) {
+    oldHighlights[0].parentNode.removeChild(oldHighlights[0]);
+  }
+}
+
 /**
  * 
  * @param {any} items - An object having list of charts on the page 
  */
 export function getComponentTree(items) {
-  let tree;
+  let charts = {},
+    tree;
   for (let item in items) {
     if (items.hasOwnProperty(item)) {
       const chartItem = items[item];
@@ -27,11 +82,16 @@ export function getComponentTree(items) {
       tree.evtListeners = getAllListenersOnChart(chartItem);
       tree.evtExtListeners = [];
       tree.id = getComponentId(items[item]);
+      charts[tree.id] = tree;
     }
   }
-  return tree;
+  charts.id = 'dummy_id';
+  return charts;
 }
 
+export function addModule (moduleCopy) {
+  return new moduleCopy();
+}
 /**
  * Creates the chart and component tree
  * This tree has the chartObject as root and the all components in
@@ -39,29 +99,41 @@ export function getComponentTree(items) {
  * @param chart: FusionCharts chart object 
  */
 function createTree(chart) {
-  let tree = {};
-  if (!isEmpty(chart._components)) {
-    let components = chart._components;
-    for (let component in components) {
-      if (components.hasOwnProperty(component)) {
-        let compVal = components[component],
-          subTree = {};
-        if (compVal.length > 0) {
-          for (let index = 0; index < compVal.length; index++) {
-            const listenersOnComponent = getAllListenersOnComponent(compVal[index]),
-            compId = getComponentId(compVal[index]);
-            subTree[compId] = createTree(compVal[index]);
-            subTree[compId].id = compId;
-            subTree[compId].config = getConfig(compVal[index].config);
-            subTree[compId].evtListeners = listenersOnComponent.evtListeners;
-            subTree[compId].evtExtListeners = listenersOnComponent.evtExtListeners;
+  let tree = {},
+    components = getChildComponents(chart);
+  try {
+    if (components){
+      if (!isEmpty(components)) {
+        // let components = chart._components;
+        for (let component in components) {
+          if (components.hasOwnProperty(component)) {
+            let compVal = components[component],
+              subTree = {};
+            if (compVal.elemStore) {
+              compVal = compVal.elemStore;
+            }
+            if (compVal.length > 0) {
+              for (let index = 0; index < compVal.length; index++) {
+                const listenersOnComponent = getAllListenersOnComponent(compVal[index]),
+                  compId = getComponentId(compVal[index]);
+                subTree[compId] = createTree(compVal[index]);
+                subTree[compId].id = compId;
+                subTree[compId].config = getConfig(compVal[index].config);
+                subTree[compId].evtListeners = listenersOnComponent.evtListeners;
+                subTree[compId].evtExtListeners = listenersOnComponent.evtExtListeners;
+              }
+              tree[component] = subTree;
+            }
           }
-          tree[component] = subTree;
         }
+      } else {
+        // return chart.getGraphicalElement();
       }
     }
-  } else {
-    // return chart.getGraphicalElement();
+  } catch (err) {
+    if (err.name === 'RangeError') {
+      console.log('Not working because of cycling dependency in -> ', chart);
+    }
   }
   return tree;
 }
@@ -146,4 +218,12 @@ function getAllListenersOnComponent(component) {
     evtListeners,
     evtExtListeners
   };
+}
+/**
+ * This API returns all compoent that passed container has
+ * @param {Object} container container is a chart or chart component
+ * @returns {Object} returns the child components
+ */
+function getChildComponents (container) {
+  return  container.getChildren();
 }
