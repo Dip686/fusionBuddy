@@ -24,7 +24,7 @@
 				<div id="jstree_demo_div" class="f-b-padding-sides-20"></div>
 			</div>
 			<div class="col-sm-6 f-b-padding-0" id="data-section" style="border-left: 1px solid #e0dacf;">
-				<div class="col-sm-12 f-b-padding-0" style="min-height: 70vh;">
+				<div class="col-sm-12 f-b-padding-0" style="min-height: 55vh;">
 					<ul class="nav nav-pills f-b-pills bg-light nav-fill" id="myTab" role="tablist">
 						<li class="nav-item">
 							<a class="nav-link active switch-tab-button" id="params" data-toggle="tab" href="#params-tab" role="tab" aria-controls="home"
@@ -50,7 +50,18 @@
 						Time Travel
 					</nav>
 					<div class="f-b-timetravel-box f-b-padding-10">
-						<ul id="state-list"></ul>
+						<div id="search-bar" class="row">
+								<div class="col-sm-6" style="padding-right: 0;">
+									<input id="search-box" type="text"/>
+								</div>
+								<div class="col-sm-6" style="padding-left: 5px;">
+									<span class="badge badge-warning ml-auto" style="cursor: pointer; padding: 5px;" id="search-btn" type="button"> Search</span>
+									<span class="badge badge-warning ml-auto"  style="cursor: pointer; padding: 5px;" id="clear-btn" type="button"> Clear</span>
+								</div>
+						</div>
+						<div style="overflow: scroll; height: inherit;">
+							<ul id="state-list"></ul>
+						</div>	
 					</div>
 				</div>
 			</div>

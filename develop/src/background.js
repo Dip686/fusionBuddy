@@ -5,29 +5,33 @@
 var ports = {};
 // let contentPort, activeTab, panelPort;
 chrome.runtime.onConnect.addListener(function (port) {
-  var tab = null;
-  var name = null;
-  if (isNumeric(port.name)) {
-    tab = port.name;
-    name = 'devtools';
-    // installContentScript(+port.name);
-    console.log('Devtools connected');
-  } else {
-    tab = port.sender.tab.id;
-    name = 'content-script';
-    console.log('Content script connected');
-  }
+  try {
+    var tab = null;
+    var name = null;
+    if (isNumeric(port.name)) {
+      tab = port.name;
+      name = 'devtools';
+      // installContentScript(+port.name);
+      console.log('Devtools connected');
+    } else {
+      tab = port.sender.tab.id;
+      name = 'content-script';
+      console.log('Content script connected');
+    }
 
-  if (!ports[tab]) {
-    ports[tab] = {
-      devtools: null,
-      'content-script': null,
-    };
-  }
-  ports[tab][name] = port;
+    if (!ports[tab]) {
+      ports[tab] = {
+        devtools: null,
+        'content-script': null,
+      };
+    }
+    ports[tab][name] = port;
 
-  if (ports[tab].devtools && ports[tab]['content-script']) {
-    doublePipe(ports[tab].devtools, ports[tab]['content-script']);
+    if (ports[tab].devtools && ports[tab]['content-script']) {
+      doublePipe(ports[tab].devtools, ports[tab]['content-script']);
+    }
+  } catch(e){
+    // suppressing errors
   }
 });
 
