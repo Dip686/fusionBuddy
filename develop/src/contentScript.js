@@ -20,32 +20,40 @@ contentPort.onMessage.addListener(handleMessageFromDevtools);
 window.addEventListener('message', handleMessageFromPage, false);
 
 function handleMessageFromDevtools(message) {
-	if (message.type === GET_CHARTS) {
-		onGetCharts(message);
-	} else if (message.type === "GET_UPDATED_DATA") {
-		onGetChartsByComponentId(message.payload.componentId);
-	} else if (message.type === 'GET_LIFE_CYCLE_LOG') {
-		onGetLifeCycleLog(message.payload.componentId);
-	} else if (message.type.includes('GET_CHARTS')) {
-		onGetChartsByComponentId(message.type.replace('GET_CHARTS_', ''));
-	} else if (message.type === HIGHLIGHT_COMPONENT) {
-		onHighlighComponentById(message.payload.componentId);
+	try {
+		if (message.type === GET_CHARTS) {
+			onGetCharts(message);
+		} else if (message.type === "GET_UPDATED_DATA") {
+			onGetChartsByComponentId(message.payload.componentId);
+		} else if (message.type === 'GET_LIFE_CYCLE_LOG') {
+			onGetLifeCycleLog(message.payload.componentId);
+		} else if (message.type.includes('GET_CHARTS')) {
+			onGetChartsByComponentId(message.type.replace('GET_CHARTS_', ''));
+		} else if (message.type === HIGHLIGHT_COMPONENT) {
+			onHighlighComponentById(message.payload.componentId);
+		}
+	}catch(e) {
+		//suppressing error
 	}
 }
 
 function handleMessageFromPage(event) {
-	if (event.data.action === 'GOT_CHARTS') {
-		contentPort.postMessage({ type: 'GOT_CHARTS', payload: event.data.payload });
-	} else if (event.data.action === 'GOT_EVENTS') {
-		contentPort.postMessage({ type: 'GOT_EVENTS', payload: event.data.payload });
-	} else if (event.data.action === 'GOT_LIFE_CYCLE_LOG') {
-		contentPort.postMessage({ type: 'GOT_LIFE_CYCLE_LOG', payload: event.data.payload });
-	} else if (event.data.action === SUMMON_FUSION_BUDDY) {
-		if (event.data.payload.enable) {
-			chrome.runtime.sendMessage({ enableFB: true });
-		} else {
-			chrome.runtime.sendMessage({ enableFB: false });
+	try {
+		if (event.data.action === 'GOT_CHARTS') {
+			contentPort.postMessage({ type: 'GOT_CHARTS', payload: event.data.payload });
+		} else if (event.data.action === 'GOT_EVENTS') {
+			contentPort.postMessage({ type: 'GOT_EVENTS', payload: event.data.payload });
+		} else if (event.data.action === 'GOT_LIFE_CYCLE_LOG') {
+			contentPort.postMessage({ type: 'GOT_LIFE_CYCLE_LOG', payload: event.data.payload });
+		} else if (event.data.action === SUMMON_FUSION_BUDDY) {
+			if (event.data.payload.enable) {
+				chrome.runtime.sendMessage({ enableFB: true });
+			} else {
+				chrome.runtime.sendMessage({ enableFB: false });
+			}
 		}
+	} catch(e) {
+		// suppressing error
 	}
 }
 

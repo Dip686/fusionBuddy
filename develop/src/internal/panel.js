@@ -152,12 +152,30 @@ function timeTravelLog(e) {
 		Component: ${e.componentId}
 	`;
 	newLiComp.classList.add('component-id-li');
-
-	stateListUL.appendChild(newLiEvt);
-	stateListUL.appendChild(newLiComp);
+	var containerEle = document.createElement('ul');
+	containerEle.setAttribute('class', 'component-event-container');
+	containerEle.appendChild(newLiEvt);
+	containerEle.appendChild(newLiComp);
+	stateListUL.appendChild(containerEle);
 	//Always scroll to bottom of the list continuously on update
 	stateListUL.parentElement.scrollTo({
 		top:stateListUL.scrollHeight,
 		behavior: 'smooth'
 	});      
 }
+document.getElementById('search-btn').addEventListener('click', function searchItems(){
+	let serachText = document.getElementById('search-box').value,
+		searchContainer = document.getElementsByClassName('component-event-container');
+	for (let index = 0; index < searchContainer.length; index++) {
+		const element = searchContainer[index];
+		if (!element.innerText.includes(serachText)) {
+			element.style.display='none';
+		} else {
+			element.style.display='block';
+		}
+	}
+});
+
+document.getElementById('clear-btn').addEventListener('click', function removeAllChildren () {
+	document.getElementById('state-list').innerHTML = '';
+});

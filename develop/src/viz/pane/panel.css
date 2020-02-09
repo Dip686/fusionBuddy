@@ -7,7 +7,9 @@ body {
 .timetravel-footer {
   height: 300px;
 }
-
+#state-list{
+  padding-left: 0px;
+}
 .timetravel-footer .state-list-holder {
   max-height: 80%;
   overflow-y: scroll;
@@ -72,8 +74,7 @@ body {
   padding: 0 20px;
 }
 .f-b-timetravel-box {
-  height: 30vh;
-  overflow: scroll;
+  height: 45vh;
   font-size: 12px;
 }
 
@@ -92,4 +93,8 @@ body {
 }
 .component-id-li {
   font-weight: bold;
+}
+#search-box {
+  width: inherit;
+  line-height: 1em;
 }
