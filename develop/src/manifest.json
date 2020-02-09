@@ -1,7 +1,7 @@
 {
   "name": "FusionCharts Developer Tools",
-  "version": "0.0.1",
-  "version_name": "0.0.1 beta",
+  "version": "0.0.2",
+  "version_name": "0.0.2 beta",
   "short_name": "FusionCharts",
   "description": "A developer tool built for FusionCharts internal engineers",
   "manifest_version":2,
