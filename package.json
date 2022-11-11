@@ -54,6 +54,6 @@
     "eslint": "^5.16.0",
     "json-formatter-js": "^2.2.1",
     "webpack": "^4.29.6",
-    "webpack-cli": "^3.2.3"
+    "webpack-cli": "^3.3.12"
   }
 }
